@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M32 4l24 9v17c0 15-10 26-24 30C18 56 8 45 8 30V13z%22 fill=%22%231D4E89%22/%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chapter 1 · AI-Driven Secure IoT Application Development</title>
+<meta name="description" content="Why tiny connected devices are hard to protect, and how AI still keeps them safe: split the work across device, gateway and cloud, shrink the models, learn together without sharing data, and protect each device from set-up to disposal.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: sticky top bar (course link, chapter, live Learning Index) + sticky top menu of lessons.
+   Each lesson = Watch (slide, Sam, captions) -> Key point -> Quick check with confidence -> Case simulation.
+   Start tab sets the personal plan; Final tab is the chapter case test; Progress tab shows the index and advice. */
+:root{
+  --bg:#F3F6F6; --surface:#FFFFFF; --surface-2:#E9EFEF; --ink:#14232A; --muted:#55686D; --line:#D2DCDD;
+  --accent:#0E6B66; --accent-soft:#D6ECEA; --signal:#B97A06; --signal-soft:#F7EBD2;
+  --good:#2C7A4B; --good-soft:#DCEFE3; --bad:#AE3434; --bad-soft:#F6DEDE; --info:#2D5B8A; --info-soft:#DDE8F4;
+  --f-display:"Newsreader", Georgia, "Times New Roman", serif;
+  --f-body:"Public Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0D1618; --surface:#142124; --surface-2:#1B2B2E; --ink:#E3ECEC; --muted:#92A6A9; --line:#2A3C3F;
+  --accent:#4DB6AC; --accent-soft:#183A38; --signal:#E3A53A; --signal-soft:#3A2E17;
+  --good:#5CBB84; --good-soft:#18352A; --bad:#E27474; --bad-soft:#3D1F1F; --info:#7FA9D8; --info-soft:#1B2A3B; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0D1618; --surface:#142124; --surface-2:#1B2B2E; --ink:#E3ECEC; --muted:#92A6A9; --line:#2A3C3F;
+  --accent:#4DB6AC; --accent-soft:#183A38; --signal:#E3A53A; --signal-soft:#3A2E17;
+  --good:#5CBB84; --good-soft:#18352A; --bad:#E27474; --bad-soft:#3D1F1F; --info:#7FA9D8; --info-soft:#1B2A3B; color-scheme:dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;margin:0}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;line-height:1.15;text-wrap:balance;margin:0}
+p{margin:0}
+button,select,input{font:inherit;color:inherit}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:12px;padding-block:9px;flex-wrap:wrap}
+.bar .home{font-size:.85rem;font-weight:600;text-decoration:none;white-space:nowrap}
+.bar h1{font-size:1.2rem;flex:1 1 240px;min-width:0}
+.bar h1 small{display:block;font-family:var(--f-body);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.idx{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 12px 4px 6px;cursor:pointer}
+.idx b{font-family:var(--f-mono);font-size:1rem;background:var(--accent);color:var(--surface);border-radius:99px;padding:1px 8px}
+.idx span{font-size:.82rem;color:var(--muted)}
+.menu{display:flex;gap:4px;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin}
+.menu button{flex:none;display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 12px;cursor:pointer;font-size:.86rem;white-space:nowrap}
+.menu button[aria-current="true"]{background:var(--accent);color:var(--surface);border-color:var(--accent);font-weight:600}
+.menu .dot{width:9px;height:9px;border-radius:50%;border:1.5px solid currentColor;opacity:.6}
+.menu .dot.done{background:var(--good);border-color:var(--good);opacity:1}
+.menu .dot.part{background:var(--signal);border-color:var(--signal);opacity:1}
+main{padding-block:20px 60px;display:flex;flex-direction:column;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;min-width:0}
+.card h3{font-size:1.25rem;margin-bottom:6px}
+.eyebrow{font-size:.74rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.lede{color:var(--muted);max-width:68ch}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:600;font-size:.92rem}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.small{padding:5px 10px;font-size:.84rem}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex-wrap:wrap}
+.seg button{border:0;background:var(--surface);padding:7px 12px;cursor:pointer;font-size:.88rem;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--surface);font-weight:600}
+.steps{display:flex;gap:6px;flex-wrap:wrap}
+.steps span{font-size:.8rem;padding:3px 10px;border-radius:99px;background:var(--surface-2);color:var(--muted)}
+.steps span.on{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.steps span.ok{background:var(--good-soft);color:var(--good);font-weight:600}
+.stage{position:relative;aspect-ratio:16/9;width:100%;background:#fff;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+.stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.slidetag{position:absolute;left:10px;top:10px;background:rgba(10,30,34,.78);color:#fff;font-size:.75rem;padding:3px 9px;border-radius:99px;font-family:var(--f-mono)}
+.bigplay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(8,20,22,.35);border:0;cursor:pointer;color:#fff;flex-direction:column;gap:8px;font-weight:600}
+.bigplay span.c{width:72px;height:72px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center}
+.speaker{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;margin-top:10px}
+.tutor{width:96px;aspect-ratio:1/1;border-radius:50%;background:var(--accent-soft);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--line);overflow:hidden}
+.tutor.speaking{box-shadow:0 0 0 3px var(--accent)}
+.tutor svg{width:100%;height:100%;display:block}
+.tutor-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.72rem;color:var(--muted)}
+.cap{min-height:4.4em;background:var(--surface-2);border-radius:8px;padding:10px 14px;font-size:1.06rem}
+.cap .w{color:var(--muted)} .cap .w.past{color:var(--ink)} .cap .w.now{background:var(--signal-soft);color:var(--ink);border-radius:3px;box-shadow:0 0 0 2px var(--signal-soft)}
+.read{background:var(--surface-2);border-radius:8px;padding:12px 16px;display:flex;flex-direction:column;gap:8px;font-size:1.04rem;max-width:75ch}
+.ctrls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.ctrls .grow{flex:1}
+.ctrls select{padding:6px 8px;border-radius:7px;border:1px solid var(--line);background:var(--surface);max-width:210px}
+.ctrls label{font-size:.84rem;color:var(--muted);display:flex;gap:6px;align-items:center}
+.key{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;background:var(--signal-soft);border-radius:10px;padding:12px 16px}
+.key b.k{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--signal);padding-top:3px}
+.key p{font-weight:600;max-width:72ch}
+.plain{background:var(--info-soft);border-radius:10px;padding:12px 16px}
+.plain b{display:block;font-size:.74rem;letter-spacing:.09em;text-transform:uppercase;color:var(--info);margin-bottom:4px}
+.plain ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:3px}
+.q{font-weight:600;font-size:1.04rem;max-width:72ch;margin-bottom:8px}
+.conf{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.86rem;color:var(--muted);margin-bottom:8px}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:9px 13px;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--good);background:var(--good-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt.part{border-color:var(--signal);background:var(--signal-soft)}
+.fb{font-size:.94rem;max-width:72ch;margin-top:8px}
+.case-set{border-left:3px solid var(--accent);padding:4px 0 4px 12px;color:var(--muted);margin-bottom:12px;max-width:75ch}
+.stepbox{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:760px){.grid2{grid-template-columns:minmax(0,1fr)}.tutor{width:72px}}
+.gauge{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.gauge svg{width:150px;height:150px;flex:none}
+.dims{display:flex;flex-direction:column;gap:9px;flex:1;min-width:240px}
+.dim{display:grid;grid-template-columns:minmax(120px,170px) 1fr 48px;gap:10px;align-items:center;font-size:.9rem}
+.dim .track{height:12px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+.dim .fill{height:100%;background:var(--accent);border-radius:99px}
+.dim output{font-family:var(--f-mono);text-align:right;font-size:.85rem}
+.ladder{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:12px}
+.ladder div{border-radius:8px;padding:8px;font-size:.8rem;text-align:center;background:var(--surface-2);color:var(--muted)}
+.ladder div.on{background:var(--accent);color:var(--surface);font-weight:700}
+@media (max-width:560px){.ladder{grid-template-columns:repeat(2,minmax(0,1fr))}}
+table.t{width:100%;border-collapse:collapse;font-size:.9rem}
+table.t th,table.t td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+table.t th{font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.tablewrap{overflow-x:auto}
+.pill{display:inline-flex;border-radius:99px;padding:2px 9px;font-size:.78rem;font-weight:600;background:var(--surface-2)}
+.pill.good{background:var(--good-soft);color:var(--good)} .pill.bad{background:var(--bad-soft);color:var(--bad)} .pill.warn{background:var(--signal-soft);color:var(--signal)} .pill.acc{background:var(--accent-soft);color:var(--accent)}
+.advice{display:flex;flex-direction:column;gap:8px}
+.advice div{display:flex;gap:10px;align-items:flex-start;background:var(--surface-2);border-radius:8px;padding:9px 12px}
+.plan{display:flex;flex-direction:column;gap:6px}
+.plan div{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.plan b{min-width:90px}
+.foot{font-size:.8rem;color:var(--muted);max-width:80ch}
+input[type=text]{padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);min-width:0;width:260px;max-width:100%}
+@media (max-width:600px){.bar{gap:8px;padding-block:6px}.bar h1{font-size:1rem;flex-basis:150px}.bar h1 small{font-size:.66rem}.idx span{display:none}.bar .home{font-size:.78rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---- Cybersecurity course palette + scene player ---- */
+:root{ --accent:#1D4E89; --accent-soft:#DCE7F5; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --accent:#60A5FA; --accent-soft:#16263B; }}
+:root[data-theme="dark"]{ --accent:#60A5FA; --accent-soft:#16263B; }
+.stage{background:#0B1626}
+.stage .slidetag{left:auto;right:12px;z-index:3}
+.scenehost{position:absolute;inset:0}
+.scenehost svg{display:block;width:100%;height:100%}
+.scenehost svg g.on rect{stroke-width:5}
+.scene3d{position:absolute;inset:0;--fs:12px}
+.scene3d canvas{position:absolute;inset:0;width:100%!important;height:100%!important;display:block}
+.scene-ov{position:absolute;inset:0;pointer-events:none;font-family:var(--f-body);color:#E6EEF5;font-size:var(--fs)}
+.scene-title{position:absolute;left:4.4%;top:4.5%;font-weight:700;font-size:1.65em;letter-spacing:.01em}
+.scene-sub{position:absolute;left:4.4%;top:12%;color:#93A7BC;font-size:1.05em}
+.scene-note{position:absolute;left:0;right:0;bottom:4%;text-align:center;color:#FDE68A;font-size:1.05em}
+.scene-lab{position:absolute;left:0;top:0;background:rgba(11,22,38,.82);border:1px solid rgba(147,167,188,.45);border-radius:.5em;padding:.25em .6em;white-space:nowrap;transition:opacity .4s;text-align:center;line-height:1.25}
+.scene-lab b{display:block;font-size:1.02em}
+.scene-lab span{display:block;color:#93A7BC;font-size:.82em}
+.scene-lab.side{transform-origin:left center;text-align:left;white-space:normal;width:21em;margin-left:10.5em}
+.scene-lab.bad{border-color:#F87171} .scene-lab.bad b{color:#FCA5A5}
+.scene-lab.good{border-color:#34D399} .scene-lab.good b{color:#6EE7B7}
+.scene-lab.big{font-size:1.25em;padding:.35em .9em}
+.scene-lab.pill{font-size:.85em}
+.scene-lab.pill span{font-size:.78em}
+.scene-lab.c b{color:#BAE6FD}
+</style>
+</head>
+<body>
+
+
+<header class="top"><div class="wrap">
+  <div class="bar">
+    <a class="home" href="../index.html">← All chapters</a>
+    <h1 id="chTitle"><small id="chNum"></small><span></span></h1>
+    <button class="idx" id="idxChip" type="button" title="Your learning index for this chapter"><b id="idxVal">0</b><span id="idxLvl">Novice</span></button>
+  </div>
+  <nav class="menu" id="menu" aria-label="Chapter sections"></nav>
+</div></header>
+<main class="wrap" id="main"></main>
+
+<script src="../assets/three.min.js"></script>
+<script src="../assets/scenes.js"></script>
+<script>
+const CH = {"id": "ch01", "num": "1", "title": "AI-Driven Secure IoT Application Development", "summary": "Why tiny connected devices are hard to protect, and how AI still keeps them safe: split the work across device, gateway and cloud, shrink the models, learn together without sharing data, and protect each device from set-up to disposal.", "outcomes": ["Explain why normal security tools do not fit IoT devices, using the resource gap", "Sort an IoT threat into one of five families and name a matching AI defence", "Decide whether a security job belongs on the device, the gateway or the cloud", "Explain how distillation, pruning and quantization shrink a model, and what is lost", "Explain what federated learning shares, what it keeps private, and what epsilon controls", "Plan security across the four phases of a device's life, and read performance figures critically"], "starter": [{"q": "A typical small IoT sensor has how much working memory (RAM)?", "o": ["About 512 megabytes", "About 16 to 256 kilobytes", "About 8 gigabytes"], "a": 1}, {"q": "In federated learning, what leaves each device?", "o": ["The raw sensor data", "Nothing at all", "Only model updates"], "a": 2}, {"q": "A security model is said to be 98 per cent accurate. What is the best first question?", "o": ["How many false alarms, on which data, tested where?", "Does it use deep learning?", "Which company made it?"], "a": 0}], "lessons": [{"title": "Why IoT is hard to protect", "minutes": 2, "slides": [{"scene": {"type": "stats", "title": "The IoT security challenge", "subtitle": "Figures quoted in Chapter 1", "items": [{"v": 68, "suf": "%", "label": "of IoT devices ship with default passwords"}, {"v": 55, "suf": "%", "label": "of deployments send data unencrypted"}, {"v": 83, "suf": "%", "label": "contain publicly known vulnerabilities"}, {"v": 330, "pre": "$", "suf": "K", "label": "average cost of a breach (2024)"}]}, "say": ["Welcome to Chapter 1, AI-Driven Secure IoT Application Development. I'm Sam, your tutor.", "IoT means the Internet of Things: smart cameras, door locks, sensors, meters and medical monitors.", "Let's start with a story. In 2016 a piece of malware called Mirai took over about six hundred thousand of these devices.", "It got in mostly by trying the factory passwords that nobody had changed. It then used them as an army to knock websites offline.", "The chapter shows this is no accident. About 68 per cent of IoT devices ship with default passwords.", "About 55 per cent of deployments send their data without encryption.", "And 83 per cent contain a vulnerability that is already publicly known.", "The average cost of a breach in 2024 was around three hundred and thirty thousand dollars."], "hl": [null, null, null, null, null, null, null, 0, 0, 1, 2, 3]}, {"scene": {"type": "bars", "title": "The resource gap", "subtitle": "Working memory, log scale", "log": true, "items": [{"label": "Traditional intrusion detection system (minimum)", "value": 524288, "text": "512 MB to 2 GB", "color": "#F87171"}, {"label": "Large IoT device", "value": 256, "text": "256 KB", "color": "#34D399"}, {"label": "Small IoT device", "value": 16, "text": "16 KB", "color": "#38BDF8"}], "note": "Also: 100 MHz to 1 GHz single-core processor, 1 to 100 milliwatt power budget"}, "say": ["So why not simply install normal security software on these devices?", "Because a traditional intrusion detection system needs between 512 megabytes and 2 gigabytes of memory, and several processor cores.", "A typical IoT device has between 16 and 256 kilobytes. That is roughly a thousand times less.", "It usually has one slow processor, and a power budget of a few milliwatts, often from a battery.", "It is like trying to fit a filing cabinet into a matchbox.", "So IoT security has to be small, smart and spread out. That is what AI makes possible, as long as we design it carefully."], "hl": [null, 0, -1, -1, -1, -1, -1, -1]}], "keyPoint": "IoT devices are often insecure out of the box, and they are about a thousand times too small to run traditional security tools. Security must be small, smart and spread out.", "plain": ["Mirai (2016) took over about 600,000 devices, mostly through unchanged factory passwords.", "Many devices ship with default passwords, send unencrypted data, or have known flaws.", "A normal security tool needs megabytes or gigabytes of memory; a sensor has kilobytes."], "check": {"q": "Why can't a traditional intrusion detection system simply be installed on a smart sensor?", "o": ["Sensors do not connect to networks", "It is too expensive to license", "It needs far more memory and processing power than the sensor has"], "a": 2, "e": "Traditional systems need 512 MB to 2 GB of memory; sensors have 16 to 256 KB.", "retry": {"q": "How did the Mirai botnet mainly break into devices?", "o": ["By physically stealing devices", "By trying factory default passwords", "By breaking strong encryption"], "a": 1, "e": "Mirai mostly used default credentials that owners never changed."}}, "scenario": {"title": "The smart-building pitch", "setting": "A supplier offers 2,000 smart sensors for your office building. You are asked to sign off the security plan.", "steps": [{"prompt": "The supplier says: 'Just install our normal antivirus on each sensor.' What do you reply?", "choices": [{"t": "Fine, as long as it updates daily", "s": 0, "fb": "No. The software would not fit or run on the sensor at all."}, {"t": "That won't fit: these devices have kilobytes, not gigabytes, of memory", "s": 2, "fb": "Right. The resource gap means traditional tools cannot run on the device."}, {"t": "We don't need security for sensors", "s": 0, "fb": "No. Mirai showed that unprotected devices become an attack army."}]}, {"prompt": "What is the very first thing you insist on before installation?", "choices": [{"t": "Add a warning sticker to each device", "s": 0, "fb": "No. Stickers do not stop automated attacks."}, {"t": "Change every default password and use unique credentials", "s": 2, "fb": "Right. Default credentials are the weakness Mirai exploited."}, {"t": "Buy faster Wi-Fi", "s": 0, "fb": "No. Speed does nothing for this weakness."}]}]}}, {"title": "Five families of threats", "minutes": 2, "slides": [{"scene": {"type": "map", "title": "IoT threat taxonomy and AI defences", "subtitle": "Figure 1.1", "leftTitle": "THREAT FAMILY", "rightTitle": "AI DEFENCE", "left": [{"label": "Authentication", "sub": "Default passwords, session hijacking"}, {"label": "Network", "sub": "DDoS, man-in-the-middle, protocol attacks"}, {"label": "Firmware", "sub": "Backdoors, supply-chain compromise"}, {"label": "Physical", "sub": "Tampering, side-channel attacks"}, {"label": "Data privacy", "sub": "Inference attacks, unauthorised access"}], "right": [{"label": "Behavioural biometrics", "sub": "Spots unusual login patterns"}, {"label": "ML traffic analysis", "sub": "Intelligent IDS / IPS"}, {"label": "Automated vulnerability scanning", "sub": "Finds weak firmware early"}, {"label": "Sensor fusion detection", "sub": "With secure boot checks"}, {"label": "Federated learning", "sub": "With differential privacy"}]}, "say": ["The chapter sorts IoT threats into five families. Each one has a matching AI-based defence.", "First, authentication threats: default passwords and session hijacking. The defence is behavioural biometrics. The AI learns how a real user normally logs in and flags anything unusual.", "Second, network threats: floods of traffic called DDoS, man-in-the-middle eavesdropping, and protocol tricks. Machine-learning traffic analysis powers smarter intrusion detection and prevention.", "Third, firmware threats: hidden backdoors, or code poisoned in the supply chain. Automated vulnerability scanning helps find weak firmware early.", "Fourth, physical threats: someone opens the device, or measures its power use to steal secrets. That is a side-channel attack. Sensor fusion combines readings from several sensors to notice tampering, alongside secure boot checks.", "Fifth, data privacy threats: attackers infer private facts from data. Federated learning with differential privacy keeps raw data on the device. We will meet it in lesson 5.", "One caution. The pairs are a helpful map, not strict rules. Real defences overlap, and secure boot itself is a hardware check, not AI."], "hl": [null, null, 0, 0, 0, 1, 1, 2, 2, 3, 3, 3, 4, 4, 4, -1, -1, -1]}], "keyPoint": "Five threat families — authentication, network, firmware, physical and data privacy — each with a matching AI defence. The map helps you think, but real defences overlap.", "plain": ["Authentication: someone pretends to be you. Network: someone floods or listens to traffic.", "Firmware: the device's own software is poisoned. Physical: someone handles the device.", "Data privacy: someone learns private facts from the data."], "check": {"q": "An attacker measures a smart lock's power use to work out its secret key. Which threat family is this?", "o": ["Physical", "Authentication", "Network"], "a": 0, "e": "Measuring power or timing is a side-channel attack, which the chapter places under physical threats.", "retry": {"q": "Which AI defence does the chapter pair with authentication threats?", "o": ["Sensor fusion", "Behavioural biometrics", "Federated learning"], "a": 1, "e": "Behavioural biometrics learns normal login behaviour and flags unusual patterns."}}, "scenario": {"title": "The smart-home review", "setting": "A family's smart home has cameras, a thermostat and a smart door lock. You are reviewing its threats.", "steps": [{"prompt": "A firmware update for the cameras came from an unknown website. Which threat family should worry you most?", "choices": [{"t": "Physical tampering", "s": 0, "fb": "No. Nobody touched the camera."}, {"t": "Data privacy only", "s": 1, "fb": "Partly. Privacy may suffer later, but the entry point is the firmware."}, {"t": "Firmware: a backdoor or supply-chain compromise", "s": 2, "fb": "Right. Unverified updates are a classic firmware threat."}]}, {"prompt": "The door lock app shows logins at 3 a.m. from a new phone. Which AI defence fits best?", "choices": [{"t": "Model compression", "s": 0, "fb": "No. That makes models smaller; it does not detect logins."}, {"t": "Behavioural biometrics that flag unusual login patterns", "s": 2, "fb": "Right. This is an authentication threat, and behavioural biometrics is the paired defence."}, {"t": "Turn the lock off", "s": 0, "fb": "No. That removes the security the lock provides."}]}]}}, {"title": "Where the AI runs: three tiers", "minutes": 2, "slides": [{"scene": {"type": "stack", "title": "Three-tier edge architecture", "subtitle": "Figure 1.2 · alerts flow up, updated models flow down", "flow": "both", "items": [{"label": "Device tier", "sub": "Models under 100 KB · under 10 ms · decision trees, quantized NNs, rules", "color": "#38BDF8"}, {"label": "Gateway tier", "sub": "Models up to 10 MB · 50–100 ms · random forest, traffic analysis, IDS", "color": "#34D399"}, {"label": "Cloud tier", "sub": "GPU clusters · global view · deep learning, training, forensics", "color": "#A78BFA"}]}, "say": ["So where should the security AI actually run? The chapter's answer is: in three places, each doing what it does best.", "At the bottom is the device tier. Models here are under 100 kilobytes, on a slow microcontroller.", "They use simple methods like decision trees, rule-based machine learning and small quantized neural networks. They can decide in under 10 milliseconds.", "Their job is local threat detection: a fast first reaction right where the attack happens.", "In the middle is the gateway tier, like a smart router. It has a faster processor and room for models up to about 10 megabytes. It decides in 50 to 100 milliseconds.", "It watches traffic from many devices at once, so it can spot a coordinated attack that no single device could see.", "At the top is the cloud tier: powerful servers with GPU clusters and a global view.", "This is where deep learning models are trained, where forensic investigation happens, and where the overall strategy is orchestrated.", "Alerts travel up. Updated models are trained in the cloud and pushed back down. Not every job needs to run everywhere."], "hl": [null, null, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, -1, -1, -1]}], "keyPoint": "Device = fast and simple, gateway = the local big picture, cloud = heavy learning and the global view. Match each job to the tier that can do it in time.", "plain": ["Device: tiny models, decisions in under 10 milliseconds.", "Gateway: bigger models, sees many devices, 50 to 100 milliseconds.", "Cloud: trains and investigates; slower, but sees everything."], "check": {"q": "Which tier is best placed to notice a coordinated attack across many sensors in one building?", "o": ["Each single device", "None of them", "The gateway tier"], "a": 2, "e": "The gateway sees traffic from many devices at once, so it can spot coordination.", "retry": {"q": "Where are deep learning models normally trained in this architecture?", "o": ["In the cloud tier", "On the device", "On the gateway only"], "a": 0, "e": "Training needs GPU clusters, which live in the cloud tier."}}, "scenario": {"title": "The factory floor", "setting": "A factory has 1,000 sensors and 10 gateways. A critical alert must reach the right place in under 100 milliseconds.", "steps": [{"prompt": "A sensor detects a malicious command aimed at itself. Where should the first decision be made?", "choices": [{"t": "Wait for a human to review it", "s": 0, "fb": "No. That cannot meet a millisecond-level target."}, {"t": "Send everything to the cloud first", "s": 0, "fb": "No. The round trip is too slow for a critical first response."}, {"t": "On the device, in under 10 milliseconds", "s": 2, "fb": "Right. A local, fast decision is the device tier's job."}]}, {"prompt": "The security team wants to retrain the detection model on a year of data from all sites. Where?", "choices": [{"t": "On one gateway", "s": 1, "fb": "Partly. A gateway sees only its own area and lacks GPU power for big training."}, {"t": "In the cloud tier, then push the updated model down", "s": 2, "fb": "Right. Heavy training belongs in the cloud; devices receive the result."}, {"t": "On each sensor", "s": 0, "fb": "No. Sensors have kilobytes of memory and tiny power budgets."}]}]}}, {"title": "Shrinking AI to fit", "minutes": 2, "slides": [{"scene": {"type": "shrink", "title": "Model compression pipeline", "subtitle": "Figure 1.3", "steps": ["Original model", "1. Knowledge distillation", "2. Pruning", "3. Quantization", "Compressed model"], "info": ["about 100 MB, 32-bit decimal numbers", "a small 'student' learns from a big 'teacher' (10–50x smaller)", "remove about 90% of connections", "32-bit decimals → 8-bit integers (4x smaller)", "about 2 MB: 50–100x smaller overall, over 95% of accuracy kept"]}, "say": ["Here is a security model as it comes out of the cloud: around 100 megabytes, full of 32-bit decimal numbers.", "Far too big for a device. So the chapter shrinks it in stages.", "Step one is knowledge distillation. A big teacher model trains a much smaller student model to copy its answers. That alone can make it 10 to 50 times smaller.", "Step two is pruning. Most connections inside a neural network contribute very little, so about 90 per cent of them are removed, and the accuracy is largely kept.", "Step three is quantization. The 32-bit decimal numbers are replaced with 8-bit whole numbers. That is four times smaller. It also lets cheap chips without a floating-point unit run the model.", "A final step, neural architecture search, tunes the model's shape to the hardware.", "The result in the figure is about 2 megabytes: 50 to 100 times smaller overall, while keeping more than 95 per cent of the original accuracy."], "hl": [0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 3, 3, 3, 4]}, {"scene": {"type": "bars", "title": "Lab results: which model fits a 256 KB device?", "subtitle": "Exercise 3, instructor manual", "items": [{"label": "Original (32-bit)", "value": 2100, "text": "2.1 MB · 96.2% accurate", "color": "#F87171"}, {"label": "Quantized (8-bit)", "value": 540, "text": "540 KB · 95.8%", "color": "#FBBF24"}, {"label": "Pruned (80%)", "value": 420, "text": "420 KB · 94.9%", "color": "#A78BFA"}, {"label": "Distilled student", "value": 180, "text": "180 KB · 93.4% · fits", "color": "#34D399"}], "note": "Target: ARM Cortex-M4 with 256 KB of RAM"}, "say": ["There is always a trade-off between size and accuracy. The chapter's lab exercise makes this concrete.", "The original model is 2 point 1 megabytes and about 96 per cent accurate.", "Quantizing it keeps almost all the accuracy and cuts it to 540 kilobytes.", "Pruning 80 per cent of connections gives 420 kilobytes.", "The distilled student is just 180 kilobytes, with about 93 per cent accuracy. It is the only one that fits a 256 kilobyte device.", "So notice: the 2 megabyte model from the figure suits a gateway. The smallest devices need the techniques pushed further, and you accept a little less accuracy."], "hl": [null, null, 0, 1, 2, 3, 3, -1, -1]}], "keyPoint": "Distil, prune and quantize to make models 50 to 100 times smaller while keeping most of the accuracy — but always check the result fits the real device's memory.", "plain": ["Distillation: a small student copies a big teacher.", "Pruning: cut the connections that barely matter.", "Quantization: store numbers with fewer bits."], "check": {"q": "Which technique replaces 32-bit decimal numbers with 8-bit whole numbers?", "o": ["Distillation", "Pruning", "Quantization"], "a": 2, "e": "Quantization reduces the precision of the numbers, making the model about four times smaller.", "retry": {"q": "In the lab results, which model was the only one to fit a 256 KB device?", "o": ["The original at 2.1 MB", "The distilled student at 180 KB", "The quantized model at 540 KB"], "a": 1, "e": "Only the 180 KB distilled student fits under 256 KB."}}, "scenario": {"title": "The wearable monitor", "setting": "Your team must put an intrusion detector on a wearable with 256 KB of RAM and no floating-point unit.", "steps": [{"prompt": "The current model is 2 MB and uses 32-bit decimals. What do you do first?", "choices": [{"t": "Quantize to 8-bit integers so the chip can run it", "s": 2, "fb": "Right. Without a floating-point unit, integer arithmetic is essential."}, {"t": "Buy a bigger battery", "s": 0, "fb": "No. Memory and number format are the problem, not power."}, {"t": "Deploy it as it is", "s": 0, "fb": "No. It won't fit or run."}]}, {"prompt": "After quantizing it is 540 KB. Still too big. Next step?", "choices": [{"t": "Remove the security model entirely", "s": 0, "fb": "No. That leaves the device unprotected."}, {"t": "Distil a smaller student model, accepting a small accuracy drop", "s": 2, "fb": "Right. In the lab, the distilled student was the one that fitted."}, {"t": "Move it all to the cloud", "s": 1, "fb": "Partly. The cloud can help, but you lose the fast local response."}]}]}}, {"title": "Learning together, privately", "minutes": 2, "slides": [{"scene": {"type": "hub", "mode": "fl", "title": "Federated learning", "subtitle": "Figure 1.5 · data stays home, only updates travel", "center": {"label": "Aggregation server", "sub": "FedAvg + privacy engine"}, "items": [{"label": "Device 1", "sub": "private data"}, {"label": "Device 2", "sub": "private data"}, {"label": "Device 3", "sub": "private data"}, {"label": "Device 4", "sub": "private data"}, {"label": "Device 5", "sub": "private data"}]}, "say": ["Thousands of devices could learn a much better detector together. But their data may be private: camera feeds, health readings, home routines.", "Federated learning solves this. The raw data never leaves the device.", "Each device trains on its own data, and sends up only a model update. Think of it as the lesson learned, not the evidence.", "The updates are encrypted on the way.", "The central server averages all the updates into one better global model, using a method called FedAvg.", "Then it sends the improved model back down to every device.", "According to the chapter, this gets within two to three per cent of the accuracy of collecting all the data centrally. It also cuts communication by about 90 per cent."], "hl": [null, null, null, null, 1, 1, 1, 1, 2, -1, -1]}, {"scene": {"type": "panels", "title": "Adding differential privacy", "items": [{"label": "What epsilon (ε) does", "color": "#FBBF24", "lines": ["Calibrated random noise is added to updates", "Smaller ε = more noise = stronger privacy", "Larger ε = less noise = better accuracy", "The chapter uses ε = 1.0 as a formal guarantee"]}, {"label": "Be careful", "color": "#F87171", "lines": ["Updates can still leak clues about data", "Privacy is 'used up' over many rounds", "Federated learning supports GDPR / HIPAA compliance", "It does not guarantee compliance by itself"]}]}, "say": ["Is sharing only updates enough? Not quite. Clever attackers can sometimes work backwards from an update to guess the data.", "So the chapter adds differential privacy. Carefully measured random noise is added, so no single person's data can be picked out.", "The amount of noise is set by a number called epsilon. Here is the counter-intuitive part: a smaller epsilon means more noise and stronger privacy, but lower accuracy.", "The chapter uses an epsilon of one, which it calls a formal privacy guarantee.", "Two cautions. Privacy gets used up a little with every training round, so it must be budgeted.", "And federated learning helps an organisation meet laws like GDPR and HIPAA. But it does not make a system compliant on its own."], "hl": [null, null, null, 0, 0, 0, 0, 0, 1, 1, 1, 1]}], "keyPoint": "Share the lesson, not the data. Add calibrated noise (differential privacy) for a formal guarantee: smaller epsilon means stronger privacy and slightly lower accuracy.", "plain": ["Each device trains locally and sends only an update.", "The server averages updates and sends a better model back.", "Noise added by differential privacy hides any one person's data."], "check": {"q": "What travels from each device to the server in federated learning?", "o": ["Model updates only", "A copy of the whole device", "All the raw sensor data"], "a": 0, "e": "Only model updates (gradients) travel; raw data stays on the device.", "retry": {"q": "If you lower epsilon from 1.0 to 0.1, what happens?", "o": ["Nothing changes", "More noise: stronger privacy, lower accuracy", "Less noise: weaker privacy"], "a": 1, "e": "Smaller epsilon means more noise, stronger privacy and some loss of accuracy."}}, "scenario": {"title": "The hospital wearables", "setting": "Five hospitals want a shared model to detect attacks on patient wearables, but cannot share patient data.", "steps": [{"prompt": "Which approach fits?", "choices": [{"t": "Each hospital trains alone and never shares", "s": 1, "fb": "Partly. It's private, but loses the benefit of learning together."}, {"t": "Copy all data to one central server", "s": 0, "fb": "No. That is exactly what they cannot do."}, {"t": "Federated learning: train locally, share only updates", "s": 2, "fb": "Right. Raw patient data never leaves each hospital's devices."}]}, {"prompt": "The data protection officer asks: 'So we're automatically GDPR compliant?' What do you say?", "choices": [{"t": "No. It supports compliance, but we still need differential privacy, governance and checks", "s": 2, "fb": "Right. Federated learning helps; it does not guarantee compliance alone."}, {"t": "Compliance doesn't apply to AI", "s": 0, "fb": "No. Data protection law still applies."}, {"t": "Yes, completely", "s": 0, "fb": "No. Updates can leak information and other legal duties still apply."}]}]}}, {"title": "Protecting the whole device life", "minutes": 2, "slides": [{"scene": {"type": "flow", "title": "Device lifecycle security", "subtitle": "Figure 1.4", "loop": "In practice, maintenance loops back into operation", "items": [{"label": "1 Provisioning", "sub": "Unique PUF identity|Cryptographic keys|Zero-touch onboarding", "badge": "Root of trust"}, {"label": "2 Operation", "sub": "Continuous monitoring|AI anomaly detection|Secure updates", "badge": "98% · <1% FP"}, {"label": "3 Maintenance", "sub": "Predictive analytics|Health checks|Security patching", "badge": "30–90 days"}, {"label": "4 Decommission", "sub": "Wipe data|Revoke credentials|Blockchain audit", "badge": "Verified"}]}, "say": ["Security is not a one-off. A device needs protecting from the day it is set up to the day it is thrown away. The chapter uses four phases.", "Phase one is provisioning. The device gets a unique identity, often from a PUF: a physical unclonable function, a tiny fingerprint built into the chip that cannot be copied.", "It also gets its cryptographic keys, joins the network automatically with zero-touch onboarding, and starts from a known security baseline. This forms its hardware root of trust.", "Phase two is operation. AI watches continuously for unusual behaviour and can respond automatically. The chapter reports 98 per cent accuracy with under one per cent false alarms.", "Phase three is maintenance. Predictive analytics forecasts problems 30 to 90 days ahead, and security patches are prioritised.", "Phase four is decommissioning. Data is wiped, credentials are revoked, the device is removed from the registry, and a blockchain record proves it was destroyed.", "Skip any phase and you leave a gap. An old device thrown away with its keys still valid is an open door."], "hl": [null, null, null, 0, 0, 0, 0, 1, 1, 1, 2, 2, 3, 3, -1, -1]}], "keyPoint": "Four phases — provision, operate, maintain, decommission — each with its own security tasks, and AI helping at every phase.", "plain": ["Provisioning: give the device a secure, unique identity and keys.", "Operation and maintenance: watch it, update it, patch it.", "Decommission: wipe it and cancel its keys so it can't be misused."], "check": {"q": "A retired sensor is sold online with its network credentials still valid. Which phase failed?", "o": ["Provisioning", "Operation", "Decommissioning"], "a": 2, "e": "Decommissioning should wipe data and revoke credentials.", "retry": {"q": "What is a PUF used for at provisioning?", "o": ["Giving the chip a unique identity that can't be copied", "Compressing models", "Encrypting the cloud"], "a": 0, "e": "A physical unclonable function is a chip-level fingerprint used for identity."}}, "scenario": {"title": "The glucose monitor fleet", "setting": "Your company runs 50,000 continuous glucose monitors for patients (Exercise 5 in the manual).", "steps": [{"prompt": "Devices are about to ship. What must happen first?", "choices": [{"t": "Use one shared password for all devices", "s": 0, "fb": "No. One leak would expose the whole fleet."}, {"t": "Ship now, add security with a later update", "s": 0, "fb": "No. Without an identity from the start, later updates can't be trusted."}, {"t": "Give each a unique identity and keys before it leaves the factory", "s": 2, "fb": "Right. Provisioning sets the root of trust for the device's whole life."}]}, {"prompt": "Patients return old monitors for recycling. What do you require?", "choices": [{"t": "Throw them in general waste", "s": 0, "fb": "No. Health data and valid keys could be recovered."}, {"t": "Wipe data, revoke credentials, remove from registry, record the destruction", "s": 2, "fb": "Right. That is the full decommissioning phase."}, {"t": "Just factory-reset them", "s": 1, "fb": "Partly. A reset helps, but credentials must also be revoked and the destruction recorded."}]}]}}, {"title": "Results, limits and what's next", "minutes": 2, "slides": [{"scene": {"type": "stats", "title": "Reported results", "subtitle": "Tested on the Bot-IoT and IoT-23 benchmark datasets", "items": [{"v": 98, "pre": ">", "suf": "%", "label": "detection accuracy, under 1% false positives"}, {"v": "50–100", "suf": "x", "label": "model compression, deployable on microcontrollers"}, {"v": 10, "pre": "<", "suf": " ms", "label": "device-tier response time"}, {"v": "40–60", "suf": "%", "label": "bandwidth saved by processing at the edge"}]}, "say": ["What did the approaches in this chapter achieve?", "Detection accuracy above 98 per cent, with under one per cent false alarms.", "Models 50 to 100 times smaller, small enough for microcontrollers.", "Device-level responses in under 10 milliseconds.", "And 40 to 60 per cent less bandwidth, because processing happens at the edge instead of sending everything to the cloud.", "These were tested on two public benchmark datasets, Bot-IoT and IoT-23. Hardware accelerators reach 2 to 5 trillion operations per second per watt, allowing years of battery life."], "hl": [null, 0, 1, 2, 3, -1, -1]}, {"scene": {"type": "panels", "title": "Reading results wisely, and open problems", "items": [{"label": "Ask about any accuracy claim", "color": "#FBBF24", "lines": ["How many false alarms?", "How many attacks were missed?", "Precision, recall and F1, not only accuracy", "Benchmark data is not the real world"]}, {"label": "Future directions (Section 1.6)", "color": "#A78BFA", "lines": ["Adversarial robustness", "Quantum-resistant cryptography", "Automated orchestration", "Standardisation"]}]}, "say": ["A word of caution about numbers. In security, attacks are usually rare compared with normal traffic.", "A model can look very accurate while still missing many attacks. So the instructor manual asks for precision, recall and the F1 score too, not just accuracy.", "And results on a benchmark dataset may not hold on a real network.", "The chapter ends with four open problems.", "Attackers will try to fool the AI itself. That is adversarial robustness.", "Quantum computers threaten today's encryption, which we cover in Chapter 3.", "And managing all this automatically, with common standards, is still work in progress."], "hl": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1]}], "keyPoint": "The reported results are strong (over 98% detection, 50–100x smaller, under 10 ms) but come from benchmarks. Always ask about false alarms, missed attacks and real-world testing.", "plain": ["Very accurate, very small and very fast, on test data.", "Accuracy alone can hide missed attacks when attacks are rare.", "Next challenges: attacks on the AI, quantum risk, automation, standards."], "check": {"q": "Why does the manual ask for precision, recall and F1, not just accuracy?", "o": ["Because accuracy is always wrong", "Because F1 is required by law", "Because attacks are rare, so accuracy alone can hide missed attacks"], "a": 2, "e": "With rare attacks, a model can be 'accurate' while missing many of them.", "retry": {"q": "Which is listed as a future direction in Section 1.6?", "o": ["Ending federated learning", "Adversarial robustness", "Removing encryption"], "a": 1, "e": "The four directions are adversarial robustness, quantum-resistant cryptography, automated orchestration and standardisation."}}, "scenario": {"title": "The vendor's dashboard", "setting": "A vendor shows your board a slide: '99% accurate IoT threat detection'.", "steps": [{"prompt": "What do you ask first?", "choices": [{"t": "Nothing; 99% is excellent", "s": 0, "fb": "No. With rare attacks, 99% accuracy could still miss most of them."}, {"t": "Can we have a discount?", "s": 0, "fb": "No. Price comes after you know it works."}, {"t": "How many false alarms and missed attacks, on what data, tested where?", "s": 2, "fb": "Right. Accuracy alone can hide important failures."}]}, {"prompt": "The vendor says it was tested only on a public benchmark. What next?", "choices": [{"t": "Reject all AI tools", "s": 0, "fb": "No. Test it properly instead."}, {"t": "Run a pilot on our own network before buying", "s": 2, "fb": "Right. Benchmark results may not hold in your environment."}, {"t": "Buy it for all sites immediately", "s": 0, "fb": "No. Untested in your environment is a risk."}]}]}}], "test": [{"q": "Roughly how much smaller is a typical IoT device's memory than a traditional intrusion detection system needs?", "o": ["About the same", "About twice as small", "About a thousand times smaller"], "a": 2, "e": "Kilobytes versus hundreds of megabytes to gigabytes.", "lesson": 0}, {"q": "Which weakness did the Mirai botnet mainly exploit?", "o": ["Blockchain bugs", "Default credentials", "Quantum computers"], "a": 1, "e": "Mirai used unchanged factory passwords.", "lesson": 0}, {"q": "Session hijacking belongs to which threat family?", "o": ["Authentication", "Firmware", "Physical"], "a": 0, "e": "It is a way of taking over a logged-in identity.", "lesson": 1}, {"q": "A fake firmware update installs a hidden backdoor. Which threat family?", "o": ["Network", "Firmware", "Data privacy"], "a": 1, "e": "Backdoors and supply-chain compromise are firmware threats.", "lesson": 1}, {"q": "Which tier makes decisions in under 10 milliseconds?", "o": ["Gateway tier", "Cloud tier", "Device tier"], "a": 2, "e": "The device tier gives the fastest local response.", "lesson": 2}, {"q": "Which tier trains deep learning models on GPU clusters?", "o": ["Cloud tier", "Gateway tier", "Device tier"], "a": 0, "e": "Training needs the cloud's resources.", "lesson": 2}, {"q": "In knowledge distillation, what happens?", "o": ["Numbers are rounded to integers", "Connections are deleted", "A small student model learns to copy a large teacher model"], "a": 2, "e": "That is distillation; the others are pruning and quantization.", "lesson": 3}, {"q": "Quantizing from 32-bit to 8-bit makes a model roughly…", "o": ["Ten times larger", "Four times smaller", "No different in size"], "a": 1, "e": "32 bits to 8 bits is a factor of four.", "lesson": 3}, {"q": "In federated learning, the server combines updates using…", "o": ["FedAvg (federated averaging)", "A blockchain miner", "Pruning"], "a": 0, "e": "FedAvg averages the model updates.", "lesson": 4}, {"q": "A smaller epsilon in differential privacy means…", "o": ["Faster training", "Stronger privacy, more noise", "Weaker privacy, less noise"], "a": 1, "e": "Smaller epsilon adds more noise.", "lesson": 4}, {"q": "Revoking credentials belongs to which lifecycle phase?", "o": ["Maintenance", "Provisioning", "Decommissioning"], "a": 2, "e": "Credentials are revoked when the device is retired.", "lesson": 5}, {"q": "Why can high accuracy be misleading in attack detection?", "o": ["Attacks are rare, so many could be missed while accuracy stays high", "Accuracy is always low", "It measures battery life"], "a": 0, "e": "Look at false alarms, missed attacks, precision and recall.", "lesson": 6}]};
+const $ = s => document.querySelector(s);
+function h(tag, attrs, ...kids){ const e=document.createElement(tag); if(attrs) for(const [k,v] of Object.entries(attrs)){ if(k==='class') e.className=v; else if(k==='html') e.innerHTML=v; else if(k.startsWith('on')) e.addEventListener(k.slice(2),v); else if(v!==false&&v!=null) e.setAttribute(k,v===true?'':v);} for(const k of kids.flat()) if(k!=null&&k!==false) e.append(k.nodeType?k:document.createTextNode(k)); return e; }
+const pad = n => String(n).padStart(2,'0');
+const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+const pct = x => Math.round(100*x);
+function seg(options, value, onChange, label){ const w = h('div',{class:'seg',role:'group','aria-label':label||''}); const bs = options.map(([v,t]) => { const b = h('button',{type:'button','aria-pressed':String(v===value)}, t); b.onclick = () => { bs.forEach(x=>x.setAttribute('aria-pressed','false')); b.setAttribute('aria-pressed','true'); onChange(v); }; return b; }); w.append(...bs); return w; }
+
+/* ---------------- learner state ---------------- */
+const KEY = 'aic:' + CH.id;
+const blank = () => ({ v:2, starter:null, plan:null, lessons:{}, test:null, secs:0, updated:0, name:'' });
+let S;
+try { S = Object.assign(blank(), JSON.parse(localStorage.getItem(KEY) || 'null') || {}); } catch(e){ S = blank(); }
+function save(){ S.updated = Date.now(); S.meta = {title:CH.title, num:CH.num, index:metrics().index, level:metrics().level, lessons:CH.lessons.length, done:Object.values(S.lessons).filter(l=>l.done).length, test:!!S.test};
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} renderChip(); renderMenu(); }
+function L(i){ return S.lessons[i] || (S.lessons[i] = {watched:false, check:null, retry:null, caseScore:0, caseMax:0, caseDone:false, done:false, secs:0}); }
+
+/* ---------------- metrics (Learning Index) ----------------
+   Knowledge 35%: first-attempt quick checks + latest final-test answers correct
+   Application 35%: points earned in case simulations (each choice 0–2)
+   Self-awareness 15%: how often your confidence matched your answer (sure & right, or unsure & wrong)
+   Completion 15%: lessons completed + final test taken
+   Levels follow Benner's novice-to-expert stages (shortened for a short course). */
+const LEVELS = [[0,'Novice','Starting out: knows the words, needs support to apply them'],[40,'Advanced beginner','Recognises the main ideas in familiar cases'],[60,'Competent','Applies the ideas to new cases and asks the right questions'],[80,'Proficient','Judges tools confidently and explains why to colleagues']];
+function metrics(){
+  const n = CH.lessons.length; let kOk=0,kN=0,aPts=0,aMax=0,cal=0,calN=0,done=0;
+  for (let i=0;i<n;i++){ const l = S.lessons[i]; if (!l) continue;
+    if (l.check){ kN++; if (l.check.ok) kOk++; if (l.check.conf){ calN++; if ((l.check.conf==='sure')===l.check.ok) cal++; } }
+    aPts += l.caseScore||0; aMax += l.caseDone ? (l.caseMax||0) : 0; if (l.done) done++; }
+  if (S.test){ S.test.answers.forEach(a=>{ kN++; if (a.ok) kOk++; if (a.conf){ calN++; if ((a.conf==='sure')===a.ok) cal++; } }); }
+  const K = kN? kOk/kN : 0, A = aMax? aPts/aMax : 0, C = calN? cal/calN : null, P = (done + (S.test?1:0))/(n+1);
+  const parts = [[K,.35],[A,.35],[P,.15]]; if (C!=null) parts.push([C,.15]);
+  const wsum = parts.reduce((x,p)=>x+p[1],0); const idx = Math.round(100*parts.reduce((x,p)=>x+p[0]*p[1],0)/wsum);
+  const lv = LEVELS.filter(l=>idx>=l[0]).pop();
+  return {K,A,C,P,index:idx,level:lv[1],levelText:lv[2],kN,aMax,calN,done,n};
+}
+
+/* ---------------- tutor + voice ---------------- */
+const TUTOR_SVG = `<svg viewBox="0 0 200 200"><defs><clipPath id="cc"><circle cx="100" cy="100" r="100"/></clipPath></defs><g clip-path="url(#cc)"><rect width="200" height="200" fill="var(--accent-soft)"/><path d="M14 205 C22 154 58 138 100 136 C142 138 178 154 186 205 Z" fill="#24364A"/><path d="M84 137 L100 168 L116 137 Z" fill="#EEF4F4"/><path d="M80 140 C70 166 80 182 94 184" fill="none" stroke="#9AA9AF" stroke-width="3.2" stroke-linecap="round"/><path d="M120 140 C130 166 120 182 106 184" fill="none" stroke="#9AA9AF" stroke-width="3.2" stroke-linecap="round"/><circle cx="100" cy="188" r="6" fill="#B8C4C8" stroke="#7F8E94" stroke-width="1.5"/><rect x="88" y="110" width="24" height="32" rx="9" fill="#A9714E"/><g class="tHead"><ellipse cx="70" cy="92" rx="5" ry="8" fill="#B87C58"/><ellipse cx="130" cy="92" rx="5" ry="8" fill="#B87C58"/><ellipse cx="100" cy="88" rx="30" ry="36" fill="#C48A63"/><path d="M66 92 C60 52 84 38 104 40 C128 40 142 58 134 94 C130 76 122 64 102 63 C84 63 72 72 66 92 Z" fill="#2B211C"/><path d="M67 88 C62 108 68 124 76 128 L76 96 Z" fill="#2B211C"/><path d="M133 88 C138 108 132 124 124 128 L124 96 Z" fill="#2B211C"/><path d="M81 76 Q89 72 96 76" fill="none" stroke="#2B211C" stroke-width="2.4" stroke-linecap="round"/><path d="M104 76 Q111 72 119 76" fill="none" stroke="#2B211C" stroke-width="2.4" stroke-linecap="round"/><g class="eyes"><ellipse cx="89" cy="86" rx="3.2" ry="3.6" fill="#1D1714"/><ellipse cx="111" cy="86" rx="3.2" ry="3.6" fill="#1D1714"/></g><circle cx="89" cy="86" r="9" fill="none" stroke="#3B3532" stroke-width="1.5"/><circle cx="111" cy="86" r="9" fill="none" stroke="#3B3532" stroke-width="1.5"/><path d="M98 86 L102 86" stroke="#3B3532" stroke-width="1.5"/><path d="M100 90 Q96 100 101 102" fill="none" stroke="#9C6646" stroke-width="1.8" stroke-linecap="round"/><ellipse class="mouth" cx="100" cy="112" rx="8" ry="1.4" fill="#6E3029"/><path class="smile" d="M92 111 Q100 115 108 111" fill="none" stroke="#6E3029" stroke-width="1.8" stroke-linecap="round"/></g></g></svg>`;
+const T = { el:null, open:0, target:0, speaking:false, hasBoundary:false, nextBlink:performance.now()+2500, blinkT:0 };
+function tick(now){
+  if (T.el && T.el.isConnected){
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (T.speaking && !T.hasBoundary && !reduce) T.target = 0.35 + 0.55*Math.abs(Math.sin(now/95))*(0.6+0.4*Math.sin(now/410));
+    if (!T.speaking) T.target = 0;
+    T.open += (T.target-T.open)*0.35; if (T.hasBoundary) T.target *= 0.86;
+    const o = reduce ? (T.speaking?0.3:0) : T.open;
+    const m = T.el.querySelector('.mouth'), sm = T.el.querySelector('.smile'), ey = T.el.querySelector('.eyes'), hd = T.el.querySelector('.tHead');
+    m.setAttribute('ry',(1.4+o*5.2).toFixed(2)); m.setAttribute('rx',(8-o*1.5).toFixed(2)); sm.style.opacity = o>0.15?0:1;
+    if (now > T.nextBlink){ T.blinkT = now; T.nextBlink = now + 2600 + Math.random()*3200; }
+    const b = now - T.blinkT, sy = b<140 ? Math.abs(1-2*b/140) : 1;
+    ey.setAttribute('transform',`translate(0 ${86*(1-sy)}) scale(1 ${Math.max(0.1,sy)})`);
+    const bob = T.speaking&&!reduce ? Math.sin(now/600)*1.2 : 0, tilt = T.speaking&&!reduce ? Math.sin(now/1300)*1.6 : 0;
+    hd.setAttribute('transform',`translate(0 ${bob.toFixed(2)}) rotate(${tilt.toFixed(2)} 100 120)`);
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+function setSpeaking(v){ T.speaking = v; if (T.el) T.el.classList.toggle('speaking', v); }
+const synth = 'speechSynthesis' in window ? window.speechSynthesis : null;
+let voices = [], voice = null;
+function pickVoice(){
+  if (!synth) return; voices = synth.getVoices().filter(v=>/^en/i.test(v.lang));
+  const pref = S.plan && S.plan.voice; const sorted = voices.slice().sort((a,b)=>(b.lang==='en-GB')-(a.lang==='en-GB'));
+  voice = pref==='__none' ? null : (sorted.find(v=>v.name===pref) || sorted.find(v=>v.lang==='en-GB') || sorted[0] || null);
+}
+if (synth){ pickVoice(); synth.addEventListener ? synth.addEventListener('voiceschanged', ()=>{ pickVoice(); if (curView && curView.startsWith('l')) refreshVoiceSel && refreshVoiceSel(); }) : (synth.onvoiceschanged = pickVoice); }
+const WPS = 2.55;
+const words = t => t.split(/\s+/).filter(Boolean).length;
+const rate = () => (S.plan && S.plan.rate) || 0.95;
+function sentences(arr){ return arr.flatMap(p => (p.match(/[^.!?]+[.!?]+["'”’]?\s*|[^.!?]+$/g) || [p]).map(x=>x.trim()).filter(Boolean)); }
+
+/* ---------------- navigation ---------------- */
+let curView = 'start';
+function views(){ return ['start', ...CH.lessons.map((_,i)=>'l'+i), 'final', 'progress']; }
+function renderMenu(){
+  const m = $('#menu'); m.innerHTML = '';
+  const add = (v, label, state) => { const b = h('button',{type:'button','aria-current':String(curView===v),onclick:()=>go(v)}, state!==undefined ? h('span',{class:'dot'+(state==='done'?' done':state==='part'?' part':'')}) : null, label); m.append(b); };
+  add('start','Start', S.plan ? 'done' : '');
+  CH.lessons.forEach((l,i)=>{ const st = S.lessons[i]; add('l'+i, `${i+1}. ${l.title}`, st ? (st.done?'done':(st.watched||st.check)?'part':'') : ''); });
+  add('final','Final case test', S.test ? 'done' : '');
+  add('progress','My progress');
+  const cur = m.querySelector('[aria-current="true"]'); if (cur) cur.scrollIntoView({block:'nearest',inline:'center'});
+}
+function renderChip(){ const M = metrics(); $('#idxVal').textContent = M.index; $('#idxLvl').textContent = M.level; }
+$('#idxChip').onclick = () => go('progress');
+let lessonTimer = null, lessonStart = 0;
+function go(v){
+  stopSpeech(); flushTime(); curView = v; const main = $('#main'); main.innerHTML = '';
+  if (v==='start') renderStart(main); else if (v==='final') renderFinal(main); else if (v==='progress') renderProgress(main); else renderLesson(main, +v.slice(1));
+  renderMenu(); renderChip(); window.scrollTo({top:0, behavior:'instant'});
+  try { history.replaceState(null,'','#'+v); } catch(e){}
+  if (v.startsWith('l')) lessonStart = Date.now();
+}
+function flushTime(){ if (curView && curView.startsWith('l') && lessonStart){ const s = Math.round((Date.now()-lessonStart)/1000); if (s>0 && s<3600){ L(+curView.slice(1)).secs += s; S.secs += s; save(); } lessonStart = 0; } }
+addEventListener('visibilitychange', ()=>{ if (document.hidden) flushTime(); else if (curView.startsWith('l')) lessonStart = Date.now(); });
+
+/* ---------------- START: personal plan ---------------- */
+function renderStart(main){
+  const plan = S.plan || {time:10, style:'listen', rate:0.95, voice:null};
+  main.append(h('div',null, h('div',{class:'eyebrow'}, CH.num==='A' ? 'Appendix A' : 'Chapter '+CH.num), h('h2',{style:'font-size:2rem;margin-top:4px'}, CH.title), h('p',{class:'lede',style:'margin-top:8px'}, CH.summary)));
+  main.append(h('div',{class:'card'}, h('h3',null,'What you will be able to do'), h('ul',{style:'margin:0;padding-left:20px'}, CH.outcomes.map(o=>h('li',null,o)))));
+  const ans = (S.starter && S.starter.answers) ? S.starter.answers.slice() : CH.starter.map(()=>null);
+  const sq = h('div',{style:'display:flex;flex-direction:column;gap:14px'});
+  CH.starter.forEach((q,i)=>{ const box = h('div',null, h('p',{class:'q'}, `${i+1}. ${q.q}`)); const opts = h('div',{class:'opts'});
+    q.o.forEach((o,j)=>{ const b = h('button',{class:'opt',type:'button','aria-pressed':String(ans[i]===j)}, o); if (ans[i]===j) b.style.borderColor='var(--accent)';
+      b.onclick = () => { ans[i]=j; opts.querySelectorAll('.opt').forEach(x=>{x.style.borderColor='';}); b.style.borderColor='var(--accent)'; }; opts.append(b); });
+    box.append(opts); sq.append(box); });
+  main.append(h('div',{class:'card'}, h('h3',null,'1. Where are you starting from?'), h('p',{class:'lede',style:'margin-bottom:12px'},'Three quick questions. There is no pass mark: your answers just set the right pace for you.'), sq));
+  const tSel = seg([[5,'5 minutes'],[10,'10 minutes'],[20,'20 minutes or more']], plan.time, v=>plan.time=v, 'Time per session');
+  const stSel = seg([['listen','Listen and watch'],['read','Read at my own pace']], plan.style, v=>plan.style=v, 'Learning style');
+  const rSel = seg([[0.8,'Slower'],[0.95,'Normal'],[1.15,'Faster']], plan.rate, v=>plan.rate=v, 'Speaking speed');
+  main.append(h('div',{class:'card'}, h('h3',null,'2. How do you like to learn?'),
+    h('div',{class:'plan',style:'gap:12px'}, h('div',null,h('b',null,'Time per sitting'),tSel), h('div',null,h('b',null,'Style'),stSel), h('div',null,h('b',null,'Speaking speed'),rSel))));
+  const out = h('div');
+  const btn = h('button',{class:'btn primary',type:'button'},'Make my plan');
+  btn.onclick = () => {
+    const score = CH.starter.reduce((a,q,i)=>a+(ans[i]===q.a?1:0),0);
+    S.starter = {answers:ans, score}; S.plan = Object.assign(plan, {path: score>=2 ? 'fast' : 'steady'}); save(); showPlan(out);
+  };
+  main.append(h('div',{class:'card'}, h('h3',null,'3. Your plan'), h('div',{class:'row',style:'margin-bottom:10px'}, btn), out));
+  if (S.plan) showPlan(out);
+}
+function showPlan(out){
+  const p = S.plan, n = CH.lessons.length; out.innerHTML = '';
+  const per = Math.max(1, Math.floor(p.time / ((p.style==='read'?1.5:2.2) + 2)));
+  const sessions = []; for (let i=0;i<n;i+=per) sessions.push([i, Math.min(n,i+per)-1]);
+  const pathTxt = p.path==='fast' ? 'Fast track. You already know some of this, so each lesson lets you skip straight to the check and case. The plain-words summaries stay folded unless you need them.' : 'Step by step. Each lesson shows a plain-words summary after Sam explains it, and gives you a second try if a question trips you up.';
+  out.append(h('div',{class:'plan'},
+    h('div',null,h('b',null,'Your path'), h('span',null, h('span',{class:'pill acc'}, p.path==='fast'?'Fast track':'Step by step'),' ', pathTxt)),
+    h('div',null,h('b',null,'Starter score'), h('span',null, `${S.starter.score} of ${CH.starter.length}`)),
+    h('div',null,h('b',null,'Sessions'), h('span',null, `${sessions.length} sittings of about ${p.time} minutes, then the final case test.`))),
+    h('div',{class:'advice',style:'margin-top:10px'}, sessions.map((s,k)=>h('div',null, h('b',{style:'min-width:80px'},'Sitting '+(k+1)), h('span',null, s[0]===s[1] ? `Lesson ${s[0]+1}: ${CH.lessons[s[0]].title}` : `Lessons ${s[0]+1}–${s[1]+1}: ${CH.lessons[s[0]].title} to ${CH.lessons[s[1]].title}`)))),
+    h('div',{class:'row',style:'margin-top:12px'}, h('button',{class:'btn primary',type:'button',onclick:()=>go('l'+firstUnfinished())}, firstUnfinished()===0 && !S.lessons[0] ? 'Start lesson 1' : 'Continue: lesson '+(firstUnfinished()+1)), h('span',{class:'lede',style:'font-size:.88rem'},'You can change any of this later. Your progress is saved in this browser only.')));
+}
+function firstUnfinished(){ for (let i=0;i<CH.lessons.length;i++) if (!(S.lessons[i]&&S.lessons[i].done)) return i; return CH.lessons.length-1; }
+
+/* ---------------- LESSON ---------------- */
+let player = null, refreshVoiceSel = null;
+function stopSpeech(){ if (player){ player.stop(); } }
+function renderLesson(main, i){
+  const les = CH.lessons[i], st = L(i), plan = S.plan || {path:'steady', style:'listen'};
+  if (!S.plan) main.append(h('div',{class:'card',style:'background:var(--info-soft)'}, h('p',null,'Tip: set your pace and style on the ', h('a',{href:'#start',onclick:e=>{e.preventDefault();go('start');}},'Start'),' page first. It takes a minute.')));
+  const stepsEl = h('div',{class:'steps'});
+  function renderSteps(){ stepsEl.innerHTML=''; [['Watch',st.watched],['Check',!!st.check],['Case',st.caseDone]].forEach(([t,ok],k)=>stepsEl.append(h('span',{class: ok?'ok':''}, (ok?'✓ ':(k+1)+'. ')+t))); }
+  renderSteps();
+  main.append(h('div',null, h('div',{class:'eyebrow'}, `Lesson ${i+1} of ${CH.lessons.length} · about ${les.minutes||2} minutes`), h('h2',{style:'font-size:1.8rem;margin:4px 0 8px'}, les.title), stepsEl));
+
+  // --- WATCH
+  const slides = les.slides; const sents = slides.map(s=>sentences(s.say));
+  let si = 0, ui = 0, playing = false, token = 0, timers = [], mode = plan.style === 'read' ? 'read' : 'listen';
+  const img = h('img',{alt:''}); const sceneHost = h('div',{class:'scenehost'}); let curScene = null; const tag = h('span',{class:'slidetag'}); const big = h('button',{class:'bigplay',type:'button'}, h('span',{class:'c'}, h('span',{html:'<svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l13 8-13 8z" fill="#fff"/></svg>'})), h('span',null,'Play lesson'));
+  const stage = h('div',{class:'stage'}, img, sceneHost, tag, big);
+  const tutorEl = h('div',{class:'tutor','aria-hidden':'true',html:TUTOR_SVG}); T.el = tutorEl;
+  const cap = h('div',{class:'cap','aria-live':'polite'});
+  const readBox = h('div',{class:'read'});
+  const speakRow = h('div',{class:'speaker'}, h('div',{class:'tutor-wrap'}, tutorEl, h('span',null,'Sam, your tutor')), cap);
+  const playBtn = h('button',{class:'btn primary',type:'button'},'Play');
+  const prevBtn = h('button',{class:'btn',type:'button'},'◀ Back'), nextBtn = h('button',{class:'btn',type:'button'},'Next ▶');
+  const voiceSel = h('select',{id:'voiceSel','aria-label':'Voice'});
+  refreshVoiceSel = () => { voiceSel.innerHTML=''; voiceSel.append(h('option',{value:'__none'},'No voice: captions only')); voices.slice().sort((a,b)=>(b.lang==='en-GB')-(a.lang==='en-GB')).forEach(v=>voiceSel.append(h('option',{value:v.name},`${v.name} (${v.lang})`))); voiceSel.value = voice ? voice.name : '__none'; };
+  refreshVoiceSel();
+  voiceSel.onchange = () => { S.plan = S.plan || {path:'steady',style:'listen',time:10,rate:0.95}; S.plan.voice = voiceSel.value; save(); pickVoice(); if (playing){ stop(); play(); } };
+  const rateSel = seg([[0.8,'Slower'],[0.95,'Normal'],[1.15,'Faster']], rate(), v=>{ S.plan = S.plan || {path:'steady',style:'listen',time:10}; S.plan.rate = v; save(); if (playing){ stop(); play(); } }, 'Speed');
+  const modeSel = seg([['listen','Listen'],['read','Read']], mode, v=>{ stop(); mode = v; layout(); }, 'Mode');
+  const plainBtn = h('button',{class:'btn small',type:'button'},'Explain more simply');
+  const ctrls = h('div',{class:'ctrls'}, prevBtn, playBtn, nextBtn, h('span',{class:'grow'}), modeSel, rateSel, h('label',null,'Voice', voiceSel));
+  const plainCard = h('div',{class:'plain',hidden:true}, h('b',null,'In plain words'), h('ul',null, les.plain.map(p=>h('li',null,p))));
+  const keyCard = h('div',{class:'key',hidden:!st.watched}, h('b',{class:'k'},'Key point'), h('p',null, les.keyPoint));
+  const skipBtn = h('button',{class:'btn small',type:'button',onclick:()=>{ stop(); markWatched(); checkCard.scrollIntoView({behavior:'smooth'}); }}, 'I know this: skip to the check');
+  plainBtn.onclick = () => { plainCard.hidden = !plainCard.hidden; plainBtn.textContent = plainCard.hidden ? 'Explain more simply' : 'Hide plain words'; };
+  const watchCard = h('div',{class:'card'}, stage, speakRow, readBox, ctrls, h('div',{class:'row',style:'margin-top:10px'}, plainBtn, plan.path==='fast' ? skipBtn : null), h('div',{style:'margin-top:10px'}, plainCard));
+  main.append(watchCard, keyCard);
+  function layout(){ speakRow.hidden = mode!=='listen'; readBox.hidden = mode!=='read'; playBtn.hidden = mode!=='listen'; big.hidden = mode!=='listen' || playing; rateSel.hidden = mode!=='listen'; voiceSel.parentNode.hidden = mode!=='listen'; showSlide(); }
+  function showSlide(){
+    if (curScene){ curScene.dispose(); curScene = null; }
+    if (slides[si].scene && window.Scenes){ img.hidden = true; img.removeAttribute('src'); sceneHost.hidden = false; curScene = Scenes.mount(sceneHost, slides[si].scene); }
+    else { sceneHost.hidden = true; img.hidden = false; img.src = `slides/s-${pad(slides[si].img)}.jpg`; img.alt = `Slide for ${les.title}`; } tag.textContent = `${si+1} / ${slides.length}`;
+    prevBtn.disabled = si===0; nextBtn.textContent = si===slides.length-1 ? (mode==='read' ? 'Finish reading ✓' : 'Next ▶') : 'Next ▶';
+    nextBtn.disabled = mode==='listen' && si===slides.length-1;
+    if (mode==='read'){ readBox.innerHTML=''; slides[si].say.forEach(p=>readBox.append(h('p',null,p))); }
+    else caption(-1);
+  }
+  function caption(ci){ cap.innerHTML=''; const t = sents[si][ui]||''; let pos=0; t.split(/(\s+)/).forEach(part=>{ if(!part.trim()){cap.append(part);pos+=part.length;return;} const s0=pos,e0=pos+part.length; pos=e0; cap.append(h('span',{class: ci<0?'w':(ci>=e0?'w past':ci>=s0?'w now':'w')},part)); }); }
+  function clear(){ timers.forEach(clearTimeout); timers=[]; }
+  function stop(){ playing=false; token++; clear(); if (synth) synth.cancel(); setSpeaking(false); playBtn.textContent='Play'; }
+  function play(){ if (playing) return; playing = true; big.hidden = true; playBtn.textContent='Pause'; speak(); }
+  function speak(){
+    const tok = ++token; clear(); const text = sents[si][ui]; caption(-1); if (curScene && slides[si].hl && slides[si].hl[ui] !== undefined) curScene.highlight(slides[si].hl[ui]);
+    const est = words(text)/(WPS*rate())*1000; const done = () => { if (tok!==token) return; setSpeaking(false); advance(); };
+    if (synth && voice){
+      const u = new SpeechSynthesisUtterance(text); u.voice = voice; u.lang = voice.lang; u.rate = rate(); T.hasBoundary = false;
+      u.onstart = () => { if (tok===token) setSpeaking(true); };
+      u.onboundary = e => { if (tok!==token || e.name==='sentence') return; T.hasBoundary = true; T.target = 0.55+Math.random()*0.45; caption(e.charIndex); };
+      u.onend = done; u.onerror = e => { if (tok!==token || e.error==='interrupted' || e.error==='canceled') return; silent(tok,text,est); };
+      synth.speak(u);
+      timers.push(setTimeout(()=>{ if (tok===token && !T.speaking && !synth.speaking) silent(tok,text,est); }, 2500));
+      timers.push(setTimeout(done, est*2.2+4000));
+    } else silent(tok,text,est);
+  }
+  function silent(tok,text,est){ if (tok!==token) return; clear(); T.hasBoundary=false; setSpeaking(true);
+    const starts=[]; let pos=0; text.split(/(\s+)/).forEach(p=>{ if(p.trim()) starts.push(pos); pos+=p.length; });
+    starts.forEach((c,k)=>timers.push(setTimeout(()=>{ if(tok===token) caption(c); }, est*k/starts.length)));
+    timers.push(setTimeout(()=>{ if(tok!==token) return; setSpeaking(false); advance(); }, est+250)); }
+  function advance(){ if (!playing) return; ui++;
+    if (ui >= sents[si].length){ if (si >= slides.length-1){ stop(); markWatched(); return; } si++; ui=0; showSlide(); const tok=token; timers.push(setTimeout(()=>{ if(playing&&tok===token) speak(); }, 900)); return; }
+    speak(); }
+  function markWatched(){ if (!st.watched){ st.watched = true; save(); renderSteps(); } keyCard.hidden = false; if (plan.path!=='fast') { plainCard.hidden = false; plainBtn.textContent='Hide plain words'; } cap.innerHTML = '<b>End of the lesson.</b> Now try the quick check below.'; }
+  playBtn.onclick = () => playing ? stop() : play(); big.onclick = play;
+  prevBtn.onclick = () => { const was = playing; stop(); si = Math.max(0, si-1); ui=0; showSlide(); if (was) play(); };
+  nextBtn.onclick = () => { if (mode==='read' && si===slides.length-1){ markWatched(); checkCard.scrollIntoView({behavior:'smooth'}); return; } const was = playing; stop(); si = Math.min(slides.length-1, si+1); ui=0; showSlide(); if (was) play(); };
+  player = {stop};
+
+  // --- CHECK (with confidence and adaptive second chance)
+  const checkCard = h('div',{class:'card'}); main.append(checkCard);
+  function renderCheck(){
+    checkCard.innerHTML=''; checkCard.append(h('div',{class:'eyebrow'},'Quick check'));
+    const c = les.check;
+    if (st.check){ // already answered: show summary + allow retry practice
+      checkCard.append(h('p',{class:'q'}, c.q), h('p',{class:'fb'}, st.check.ok ? h('span',{class:'pill good'},'Right first time') : h('span',{class:'pill warn'},'Missed first time'), ' ', c.e),
+        st.retry ? h('p',{class:'fb'}, 'Second chance: ', st.retry.ok ? h('span',{class:'pill good'},'right') : h('span',{class:'pill bad'},'missed')) : null,
+        h('div',{class:'row',style:'margin-top:8px'}, h('button',{class:'btn small',type:'button',onclick:()=>{ askQuestion(checkCard, c, true, ()=>{}); }},'Practise again (not scored)')));
+      return;
+    }
+    askQuestion(checkCard, c, false, (ok, conf) => {
+      st.check = {ok, conf}; save(); renderSteps();
+      if (!ok && c.retry){
+        plainCard.hidden = false; plainBtn.textContent='Hide plain words';
+        const r = h('div',{style:'margin-top:14px'}, h('div',{class:'plain'}, h('b',null,'Let\'s look at it another way'), h('ul',null, les.plain.map(p=>h('li',null,p)))));
+        const rq = h('div',{style:'margin-top:12px'}); r.append(h('div',{class:'eyebrow',style:'margin-top:12px'},'Second chance'), rq); checkCard.append(r);
+        askQuestion(rq, c.retry, false, (ok2) => { st.retry = {ok:ok2}; save(); if (!ok2) rq.append(h('p',{class:'fb'}, h('span',{class:'pill warn'},'Tip'),' Try the lesson again in Read mode, at your own pace. It is marked for review on your progress page.')); caseCard.hidden=false; }, true);
+      } else caseCard.hidden = false;
+    });
+  }
+  // --- CASE simulation
+  const caseCard = h('div',{class:'card',hidden: !st.check}); main.append(caseCard);
+  function renderCase(){
+    const sc = les.scenario; caseCard.innerHTML='';
+    caseCard.append(h('div',{class:'eyebrow'},'Case simulation'), h('h3',null, sc.title), h('p',{class:'case-set'}, sc.setting));
+    const maxPts = sc.steps.length*2; let pts = 0, k = 0;
+    const host = h('div'); caseCard.append(host);
+    if (st.caseDone){ host.append(h('p',{class:'fb'}, h('span',{class: st.caseScore>=maxPts*0.75?'pill good':st.caseScore>=maxPts/2?'pill warn':'pill bad'}, `You scored ${st.caseScore} of ${maxPts}`), ' ', h('button',{class:'btn small',type:'button',onclick:()=>{ st.caseDone=false; st.caseScore=0; save(); renderCase(); }},'Try the case again'))); finishRow(); return; }
+    function step(){
+      const s = sc.steps[k]; const box = h('div',{class:'stepbox'}, h('p',{class:'q'}, `${k+1}. ${s.prompt}`)); const opts = h('div',{class:'opts'}); const fb = h('div',{class:'fb'});
+      s.choices.forEach(ch => { const b = h('button',{class:'opt',type:'button'}, ch.t); b.onclick = () => {
+        opts.querySelectorAll('.opt').forEach(x=>x.disabled=true); b.classList.add(ch.s===2?'right':ch.s===1?'part':'wrong');
+        if (ch.s<2){ const best = s.choices.find(c=>c.s===2); if (best) [...opts.children].find(x=>x.textContent===best.t).classList.add('right'); }
+        pts += ch.s; fb.innerHTML = `<b>${ch.s===2?'Good call.':ch.s===1?'Partly.':'Not the best choice.'}</b> ${ch.fb}`;
+        k++; if (k < sc.steps.length) step(); else { st.caseDone = true; st.caseScore = pts; st.caseMax = maxPts; st.done = st.done || !!st.check; save(); renderSteps();
+          host.append(h('p',{class:'fb',style:'margin-top:12px'}, h('span',{class: pts>=maxPts*0.75?'pill good':pts>=maxPts/2?'pill warn':'pill bad'}, `Case score: ${pts} of ${maxPts}`))); finishRow(); } };
+        opts.append(b); });
+      box.append(opts, fb); host.append(box);
+    }
+    step();
+  }
+  function finishRow(){
+    st.done = !!(st.check && st.caseDone); save();
+    const next = i < CH.lessons.length-1 ? h('button',{class:'btn primary',type:'button',onclick:()=>go('l'+(i+1))}, `Next: lesson ${i+2}`) : h('button',{class:'btn primary',type:'button',onclick:()=>go('final')}, 'Go to the final case test');
+    caseCard.append(h('div',{class:'row',style:'margin-top:14px'}, next, h('button',{class:'btn',type:'button',onclick:()=>go('progress')},'See my progress')));
+  }
+  renderCheck(); renderCase(); layout();
+}
+
+/* generic question with confidence rating */
+function askQuestion(host, q, practice, onDone, isRetry){
+  const box = h('div'); host.append(box);
+  if (!isRetry || true) box.append(h('p',{class:'q'}, q.q));
+  let conf = null;
+  const confSeg = seg([['sure','I\'m sure'],['unsure','I\'m not sure']], null, v=>conf=v, 'Confidence');
+  if (!practice) box.append(h('div',{class:'conf'}, h('span',null,'Before you answer, how sure are you?'), confSeg, h('span',{style:'font-size:.8rem'},'(optional, helps your self-awareness score)')));
+  const opts = h('div',{class:'opts'}); const fb = h('div',{class:'fb'});
+  q.o.forEach((o,j)=>{ const b = h('button',{class:'opt',type:'button'}, o); b.onclick = () => {
+    const ok = j===q.a; opts.querySelectorAll('.opt').forEach(x=>x.disabled=true); b.classList.add(ok?'right':'wrong'); if (!ok) opts.children[q.a].classList.add('right');
+    fb.innerHTML = `<b>${ok?'Right.':'Not quite.'}</b> ${q.e}`; onDone(ok, conf); };
+    opts.append(b); });
+  box.append(opts, fb);
+}
+
+/* ---------------- FINAL case test ---------------- */
+function renderFinal(main){
+  const M = metrics();
+  main.append(h('div',null, h('div',{class:'eyebrow'},'Final case test'), h('h2',{style:'font-size:1.8rem;margin-top:4px'},'Check your learning path'), h('p',{class:'lede',style:'margin-top:6px'}, `${CH.test.length} short questions across all ${CH.lessons.length} lessons. You see the answer after each one. Your latest attempt counts towards your learning index, and the results show which lessons to revisit.`)));
+  if (M.done < CH.lessons.length) main.append(h('div',{class:'card',style:'background:var(--signal-soft)'}, h('p',null, `You have finished ${M.done} of ${CH.lessons.length} lessons. You can take the test now, but you will probably score higher after finishing them.`)));
+  const host = h('div',{class:'card'}); main.append(host);
+  if (S.test) { host.append(h('p',null, h('span',{class:'pill acc'}, `Last attempt: ${S.test.score} of ${CH.test.length}`), ` · ${S.test.attempts} attempt${S.test.attempts>1?'s':''}`), h('div',{class:'row',style:'margin-top:10px'}, h('button',{class:'btn primary',type:'button',onclick:()=>{ host.innerHTML=''; runTest(host); }},'Take the test again'), h('button',{class:'btn',type:'button',onclick:()=>go('progress')},'See my results'))); return; }
+  host.append(h('button',{class:'btn primary',type:'button',onclick:()=>{ host.innerHTML=''; runTest(host); }},'Start the test'));
+}
+function runTest(host){
+  const answers = []; let k = 0;
+  const prog = h('p',{class:'eyebrow'}); host.append(prog); const qhost = h('div'); host.append(qhost);
+  function next(){
+    qhost.innerHTML=''; prog.textContent = `Question ${k+1} of ${CH.test.length} · from lesson ${CH.test[k].lesson+1}: ${CH.lessons[CH.test[k].lesson].title}`;
+    askQuestion(qhost, CH.test[k], false, (ok, conf) => { answers.push({ok, conf, lesson: CH.test[k].lesson});
+      qhost.append(h('div',{class:'row',style:'margin-top:12px'}, h('button',{class:'btn primary',type:'button',onclick:()=>{ k++; if (k<CH.test.length) next(); else finish(); }}, k<CH.test.length-1?'Next question':'See my results'))); });
+  }
+  function finish(){ const score = answers.filter(a=>a.ok).length; S.test = {answers, score, attempts:(S.test?S.test.attempts:0)+1, at:Date.now()}; save(); go('progress'); }
+  next();
+}
+
+/* ---------------- PROGRESS: learning index, advice, certificate ---------------- */
+function gaugeSVG(v){
+  const r=60, c=2*Math.PI*r, f=c*v/100;
+  return `<svg viewBox="0 0 150 150" role="img" aria-label="Learning index ${v} out of 100"><circle cx="75" cy="75" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="14"/><circle cx="75" cy="75" r="${r}" fill="none" stroke="var(--accent)" stroke-width="14" stroke-linecap="round" stroke-dasharray="${f} ${c}" transform="rotate(-90 75 75)"/><text x="75" y="80" text-anchor="middle" font-size="34" font-weight="700" fill="var(--ink)" font-family="JetBrains Mono, monospace">${v}</text><text x="75" y="102" text-anchor="middle" font-size="11" fill="var(--muted)">out of 100</text></svg>`;
+}
+function advice(){
+  const out = []; const n = CH.lessons.length;
+  const testBy = {}; if (S.test) S.test.answers.forEach(a=>{ (testBy[a.lesson] = testBy[a.lesson]||{ok:0,n:0}); testBy[a.lesson].n++; if (a.ok) testBy[a.lesson].ok++; });
+  const weak = [];
+  for (let i=0;i<n;i++){ const l = S.lessons[i]; const reasons = [];
+    if (l && l.check && !l.check.ok) reasons.push('missed the quick check');
+    if (l && l.caseDone && l.caseScore < l.caseMax*0.5) reasons.push(`scored ${l.caseScore} of ${l.caseMax} on the case`);
+    if (testBy[i] && testBy[i].ok < testBy[i].n) reasons.push(`${testBy[i].n-testBy[i].ok} final-test question${testBy[i].n-testBy[i].ok>1?'s':''} wrong`);
+    if (reasons.length) weak.push([i, reasons]); }
+  weak.sort((a,b)=>b[1].length-a[1].length).slice(0,3).forEach(([i,r])=>out.push(['Revisit', `Lesson ${i+1}, ${CH.lessons[i].title}: you ${r.join(', ')}. Try it in Read mode and open "Explain more simply".`, 'l'+i]));
+  const nf = [...Array(n).keys()].find(i=>!(S.lessons[i]&&S.lessons[i].done));
+  if (nf!==undefined) out.push(['Next', `Carry on with lesson ${nf+1}, ${CH.lessons[nf].title}.`, 'l'+nf]);
+  else if (!S.test) out.push(['Next', 'All lessons done. Take the final case test to check your learning path.', 'final']);
+  const M = metrics();
+  if (M.calN >= 4 && M.C < 0.6) out.push(['Self-awareness', 'Your confidence often did not match your answers. In security work, knowing when you are unsure matters as much as knowing the answer. Keep rating your confidence.', null]);
+  if (S.plan && S.secs > 0){ const done = Object.values(S.lessons).filter(l=>l.done); const avg = done.length ? done.reduce((a,l)=>a+l.secs,0)/done.length/60 : 0;
+    if (avg >= 0.5) out.push(['Your pace', `You spend about ${avg.toFixed(1)} minutes per lesson. ${avg > 6 ? 'Taking your time is fine. Shorter sittings may suit you better: try 5-minute sittings on the Start page.' : avg < 2.5 ? 'You move quickly. If the cases feel easy, the Fast track path lets you skip straight to them.' : 'That fits your plan well.'}`, null]); }
+  if (!out.length) out.push(['Well done', 'No gaps found. You could teach this chapter to a colleague.', null]);
+  return out;
+}
+function renderProgress(main){
+  const M = metrics();
+  main.append(h('div',null, h('div',{class:'eyebrow'},'My progress'), h('h2',{style:'font-size:1.8rem;margin-top:4px'},'Your learning index'), h('p',{class:'lede',style:'margin-top:6px'}, S.test ? 'Based on your lessons, cases and final test.' : 'Provisional until you take the final case test.')));
+  const dims = [['Knowledge', M.K, 'Quick checks right first time, plus final-test answers'], ['Applying it', M.A, 'Points from the case simulations'], ['Self-awareness', M.C, 'How often your confidence matched your answer'], ['Completion', M.P, 'Lessons finished and final test taken']];
+  const dimsEl = h('div',{class:'dims'}, dims.map(([n,v,d])=>h('div',null, h('div',{class:'dim'}, h('span',null,n), h('div',{class:'track'}, h('div',{class:'fill',style:`width:${v==null?0:pct(v)}%`})), h('output',null, v==null?'—':pct(v)+'%')), h('div',{style:'font-size:.78rem;color:var(--muted);margin:-4px 0 0'}, d))));
+  const ladder = h('div',{class:'ladder'}, LEVELS.map(l=>h('div',{class: l[1]===M.level?'on':''}, l[1], h('br'), `${l[0]}+`)));
+  main.append(h('div',{class:'card'}, h('div',{class:'gauge'}, h('div',{html:gaugeSVG(M.index)}), h('div',{style:'flex:1;min-width:240px'}, h('h3',null, M.level), h('p',{class:'lede'}, M.levelText), ladder)), h('div',{style:'margin-top:16px'}, dimsEl),
+    h('p',{class:'foot',style:'margin-top:12px'},'How it is worked out: knowledge 35%, applying it 35%, self-awareness 15%, completion 15%. Levels follow the "novice to expert" stages widely used in professional education.')));
+  const adv = h('div',{class:'advice'}, advice().map(([t,txt,v])=>h('div',null, h('span',{class:'pill acc',style:'flex:none'},t), h('span',{style:'flex:1'},txt), v ? h('button',{class:'btn small',type:'button',onclick:()=>go(v)},'Go') : null)));
+  main.append(h('div',{class:'card'}, h('h3',null,'What to do next'), adv));
+  const rows = CH.lessons.map((les,i)=>{ const l = S.lessons[i]||{}; return h('tr',null, h('td',null, `${i+1}. ${les.title}`), h('td',null, l.watched?'✓':'—'), h('td',null, l.check ? (l.check.ok ? h('span',{class:'pill good'},'Right') : h('span',{class:'pill warn'},'Missed')) : '—'), h('td',null, l.caseDone ? `${l.caseScore}/${l.caseMax}` : '—'), h('td',{class:'mono'}, l.secs ? (l.secs<60 ? '<1 min' : Math.round(l.secs/60)+' min') : '—')); });
+  main.append(h('div',{class:'card'}, h('h3',null,'Lesson by lesson'), h('div',{class:'tablewrap'}, h('table',{class:'t'}, h('thead',null,h('tr',null, ['Lesson','Watched','Check','Case','Time'].map(t=>h('th',null,t)))), h('tbody',null,rows))),
+    S.test ? h('p',{style:'margin-top:10px'}, h('span',{class:'pill acc'}, `Final test: ${S.test.score} of ${CH.test.length}`)) : null));
+  // certificate
+  const nameIn = h('input',{type:'text',id:'certName',placeholder:'Your name as it should appear',value:S.name||''});
+  const certBtn = h('button',{class:'btn primary',type:'button'},'Download certificate');
+  const note = h('p',{class:'foot'});
+  const eligible = S.test && M.index >= 60;
+  certBtn.disabled = !eligible; note.textContent = eligible ? 'Saves a picture of your certificate. Your score is calculated in your own browser, so keep the file as your record.' : 'Available once you have taken the final case test and reached Competent (60 or more).';
+  certBtn.onclick = () => { S.name = nameIn.value.trim(); save(); makeCert(S.name || 'Learner', M); };
+  main.append(h('div',{class:'card'}, h('h3',null,'Certificate'), h('div',{class:'row'}, nameIn, certBtn), note,
+    h('div',{class:'row',style:'margin-top:14px'}, h('button',{class:'btn small',type:'button',onclick:()=>{ resetBox.hidden = false; }},'Start this chapter again'))));
+  const resetBox = h('div',{class:'card',hidden:true,style:'background:var(--bad-soft)'}, h('p',null,'This clears your plan, answers and scores for this chapter in this browser. It cannot be undone.'), h('div',{class:'row',style:'margin-top:10px'}, h('button',{class:'btn',type:'button',onclick:()=>{ S = blank(); save(); go('start'); }},'Yes, clear this chapter'), h('button',{class:'btn',type:'button',onclick:()=>{ resetBox.hidden=true; }},'Keep my progress')));
+  main.append(resetBox);
+}
+function makeCert(name, M){
+  const c = document.createElement('canvas'); c.width = 1600; c.height = 1130; const x = c.getContext('2d');
+  x.fillStyle = '#FFFFFF'; x.fillRect(0,0,1600,1130); x.strokeStyle = '#1D4E89'; x.lineWidth = 14; x.strokeRect(40,40,1520,1050); x.lineWidth = 2; x.strokeRect(70,70,1460,990);
+  x.fillStyle = '#1D4E89'; x.textAlign = 'center'; x.font = '600 30px Georgia, serif'; x.fillText('GUIDE TO AI FOR CYBERSECURITY', 800, 180);
+  x.fillStyle = '#14232A'; x.font = '600 72px Georgia, serif'; x.fillText('Certificate of learning', 800, 290);
+  x.font = '28px Arial, sans-serif'; x.fillStyle = '#55686D'; x.fillText('This is to record that', 800, 380);
+  x.fillStyle = '#14232A'; x.font = '600 64px Georgia, serif'; x.fillText(name.slice(0,48), 800, 470);
+  x.font = '28px Arial, sans-serif'; x.fillStyle = '#55686D'; x.fillText('has completed', 800, 550);
+  x.fillStyle = '#14232A'; x.font = '600 40px Georgia, serif'; x.fillText((CH.num==='A'?'Appendix A: ':'Chapter '+CH.num+': ') + CH.title, 800, 620, 1400);
+  x.fillStyle = '#1D4E89'; x.font = '600 46px Arial, sans-serif'; x.fillText(`Learning index ${M.index} / 100  ·  ${M.level}`, 800, 740);
+  x.fillStyle = '#55686D'; x.font = '24px Arial, sans-serif';
+  x.fillText(`Knowledge ${pct(M.K)}%   ·   Applying it ${pct(M.A)}%   ·   Self-awareness ${M.C==null?'—':pct(M.C)+'%'}   ·   Final test ${S.test.score}/${CH.test.length}`, 800, 800);
+  x.fillText('Issued ' + new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}) + '  ·  Self-assessed online course record, calculated in the learner\'s browser', 800, 980);
+  c.toBlob(b => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `certificate-${CH.id}.png`; document.body.append(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 1000); });
+}
+
+/* ---------------- boot ---------------- */
+$('#chNum').textContent = CH.num==='A' ? 'Appendix A' : 'Chapter '+CH.num;
+$('#chTitle span').textContent = CH.title;
+const hv = (location.hash||'').slice(1);
+go(views().includes(hv) ? hv : (S.plan ? 'l'+firstUnfinished() : 'start'));
+</script>
+</body>
+</html>

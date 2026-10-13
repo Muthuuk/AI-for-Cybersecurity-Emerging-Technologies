@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M32 4l24 9v17c0 15-10 26-24 30C18 56 8 45 8 30V13z%22 fill=%22%231D4E89%22/%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chapter 4 · AI Ethics in Cybersecurity: Accountability, Trust and Human Oversight</title>
+<meta name="description" content="Why ethics is harder in security, the four principles that hold up ethical AI security, building them in from the start, who is responsible when AI gets it wrong, when to trust it, and how to keep humans genuinely in control.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: sticky top bar (course link, chapter, live Learning Index) + sticky top menu of lessons.
+   Each lesson = Watch (slide, Sam, captions) -> Key point -> Quick check with confidence -> Case simulation.
+   Start tab sets the personal plan; Final tab is the chapter case test; Progress tab shows the index and advice. */
+:root{
+  --bg:#F3F6F6; --surface:#FFFFFF; --surface-2:#E9EFEF; --ink:#14232A; --muted:#55686D; --line:#D2DCDD;
+  --accent:#0E6B66; --accent-soft:#D6ECEA; --signal:#B97A06; --signal-soft:#F7EBD2;
+  --good:#2C7A4B; --good-soft:#DCEFE3; --bad:#AE3434; --bad-soft:#F6DEDE; --info:#2D5B8A; --info-soft:#DDE8F4;
+  --f-display:"Newsreader", Georgia, "Times New Roman", serif;
+  --f-body:"Public Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0D1618; --surface:#142124; --surface-2:#1B2B2E; --ink:#E3ECEC; --muted:#92A6A9; --line:#2A3C3F;
+  --accent:#4DB6AC; --accent-soft:#183A38; --signal:#E3A53A; --signal-soft:#3A2E17;
+  --good:#5CBB84; --good-soft:#18352A; --bad:#E27474; --bad-soft:#3D1F1F; --info:#7FA9D8; --info-soft:#1B2A3B; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0D1618; --surface:#142124; --surface-2:#1B2B2E; --ink:#E3ECEC; --muted:#92A6A9; --line:#2A3C3F;
+  --accent:#4DB6AC; --accent-soft:#183A38; --signal:#E3A53A; --signal-soft:#3A2E17;
+  --good:#5CBB84; --good-soft:#18352A; --bad:#E27474; --bad-soft:#3D1F1F; --info:#7FA9D8; --info-soft:#1B2A3B; color-scheme:dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;margin:0}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;line-height:1.15;text-wrap:balance;margin:0}
+p{margin:0}
+button,select,input{font:inherit;color:inherit}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:12px;padding-block:9px;flex-wrap:wrap}
+.bar .home{font-size:.85rem;font-weight:600;text-decoration:none;white-space:nowrap}
+.bar h1{font-size:1.2rem;flex:1 1 240px;min-width:0}
+.bar h1 small{display:block;font-family:var(--f-body);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.idx{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 12px 4px 6px;cursor:pointer}
+.idx b{font-family:var(--f-mono);font-size:1rem;background:var(--accent);color:var(--surface);border-radius:99px;padding:1px 8px}
+.idx span{font-size:.82rem;color:var(--muted)}
+.menu{display:flex;gap:4px;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin}
+.menu button{flex:none;display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 12px;cursor:pointer;font-size:.86rem;white-space:nowrap}
+.menu button[aria-current="true"]{background:var(--accent);color:var(--surface);border-color:var(--accent);font-weight:600}
+.menu .dot{width:9px;height:9px;border-radius:50%;border:1.5px solid currentColor;opacity:.6}
+.menu .dot.done{background:var(--good);border-color:var(--good);opacity:1}
+.menu .dot.part{background:var(--signal);border-color:var(--signal);opacity:1}
+main{padding-block:20px 60px;display:flex;flex-direction:column;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;min-width:0}
+.card h3{font-size:1.25rem;margin-bottom:6px}
+.eyebrow{font-size:.74rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.lede{color:var(--muted);max-width:68ch}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:600;font-size:.92rem}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.small{padding:5px 10px;font-size:.84rem}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex-wrap:wrap}
+.seg button{border:0;background:var(--surface);padding:7px 12px;cursor:pointer;font-size:.88rem;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--surface);font-weight:600}
+.steps{display:flex;gap:6px;flex-wrap:wrap}
+.steps span{font-size:.8rem;padding:3px 10px;border-radius:99px;background:var(--surface-2);color:var(--muted)}
+.steps span.on{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.steps span.ok{background:var(--good-soft);color:var(--good);font-weight:600}
+.stage{position:relative;aspect-ratio:16/9;width:100%;background:#fff;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+.stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.slidetag{position:absolute;left:10px;top:10px;background:rgba(10,30,34,.78);color:#fff;font-size:.75rem;padding:3px 9px;border-radius:99px;font-family:var(--f-mono)}
+.bigplay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(8,20,22,.35);border:0;cursor:pointer;color:#fff;flex-direction:column;gap:8px;font-weight:600}
+.bigplay span.c{width:72px;height:72px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center}
+.speaker{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;margin-top:10px}
+.tutor{width:96px;aspect-ratio:1/1;border-radius:50%;background:var(--accent-soft);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--line);overflow:hidden}
+.tutor.speaking{box-shadow:0 0 0 3px var(--accent)}
+.tutor svg{width:100%;height:100%;display:block}
+.tutor-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.72rem;color:var(--muted)}
+.cap{min-height:4.4em;background:var(--surface-2);border-radius:8px;padding:10px 14px;font-size:1.06rem}
+.cap .w{color:var(--muted)} .cap .w.past{color:var(--ink)} .cap .w.now{background:var(--signal-soft);color:var(--ink);border-radius:3px;box-shadow:0 0 0 2px var(--signal-soft)}
+.read{background:var(--surface-2);border-radius:8px;padding:12px 16px;display:flex;flex-direction:column;gap:8px;font-size:1.04rem;max-width:75ch}
+.ctrls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.ctrls .grow{flex:1}
+.ctrls select{padding:6px 8px;border-radius:7px;border:1px solid var(--line);background:var(--surface);max-width:210px}
+.ctrls label{font-size:.84rem;color:var(--muted);display:flex;gap:6px;align-items:center}
+.key{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;background:var(--signal-soft);border-radius:10px;padding:12px 16px}
+.key b.k{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--signal);padding-top:3px}
+.key p{font-weight:600;max-width:72ch}
+.plain{background:var(--info-soft);border-radius:10px;padding:12px 16px}
+.plain b{display:block;font-size:.74rem;letter-spacing:.09em;text-transform:uppercase;color:var(--info);margin-bottom:4px}
+.plain ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:3px}
+.q{font-weight:600;font-size:1.04rem;max-width:72ch;margin-bottom:8px}
+.conf{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.86rem;color:var(--muted);margin-bottom:8px}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:9px 13px;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--good);background:var(--good-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt.part{border-color:var(--signal);background:var(--signal-soft)}
+.fb{font-size:.94rem;max-width:72ch;margin-top:8px}
+.case-set{border-left:3px solid var(--accent);padding:4px 0 4px 12px;color:var(--muted);margin-bottom:12px;max-width:75ch}
+.stepbox{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:760px){.grid2{grid-template-columns:minmax(0,1fr)}.tutor{width:72px}}
+.gauge{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.gauge svg{width:150px;height:150px;flex:none}
+.dims{display:flex;flex-direction:column;gap:9px;flex:1;min-width:240px}
+.dim{display:grid;grid-template-columns:minmax(120px,170px) 1fr 48px;gap:10px;align-items:center;font-size:.9rem}
+.dim .track{height:12px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+.dim .fill{height:100%;background:var(--accent);border-radius:99px}
+.dim output{font-family:var(--f-mono);text-align:right;font-size:.85rem}
+.ladder{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:12px}
+.ladder div{border-radius:8px;padding:8px;font-size:.8rem;text-align:center;background:var(--surface-2);color:var(--muted)}
+.ladder div.on{background:var(--accent);color:var(--surface);font-weight:700}
+@media (max-width:560px){.ladder{grid-template-columns:repeat(2,minmax(0,1fr))}}
+table.t{width:100%;border-collapse:collapse;font-size:.9rem}
+table.t th,table.t td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+table.t th{font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.tablewrap{overflow-x:auto}
+.pill{display:inline-flex;border-radius:99px;padding:2px 9px;font-size:.78rem;font-weight:600;background:var(--surface-2)}
+.pill.good{background:var(--good-soft);color:var(--good)} .pill.bad{background:var(--bad-soft);color:var(--bad)} .pill.warn{background:var(--signal-soft);color:var(--signal)} .pill.acc{background:var(--accent-soft);color:var(--accent)}
+.advice{display:flex;flex-direction:column;gap:8px}
+.advice div{display:flex;gap:10px;align-items:flex-start;background:var(--surface-2);border-radius:8px;padding:9px 12px}
+.plan{display:flex;flex-direction:column;gap:6px}
+.plan div{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.plan b{min-width:90px}
+.foot{font-size:.8rem;color:var(--muted);max-width:80ch}
+input[type=text]{padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);min-width:0;width:260px;max-width:100%}
+@media (max-width:600px){.bar{gap:8px;padding-block:6px}.bar h1{font-size:1rem;flex-basis:150px}.bar h1 small{font-size:.66rem}.idx span{display:none}.bar .home{font-size:.78rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---- Cybersecurity course palette + scene player ---- */
+:root{ --accent:#1D4E89; --accent-soft:#DCE7F5; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --accent:#60A5FA; --accent-soft:#16263B; }}
+:root[data-theme="dark"]{ --accent:#60A5FA; --accent-soft:#16263B; }
+.stage{background:#0B1626}
+.stage .slidetag{left:auto;right:12px;z-index:3}
+.scenehost{position:absolute;inset:0}
+.scenehost svg{display:block;width:100%;height:100%}
+.scenehost svg g.on rect{stroke-width:5}
+.scene3d{position:absolute;inset:0;--fs:12px}
+.scene3d canvas{position:absolute;inset:0;width:100%!important;height:100%!important;display:block}
+.scene-ov{position:absolute;inset:0;pointer-events:none;font-family:var(--f-body);color:#E6EEF5;font-size:var(--fs)}
+.scene-title{position:absolute;left:4.4%;top:4.5%;font-weight:700;font-size:1.65em;letter-spacing:.01em}
+.scene-sub{position:absolute;left:4.4%;top:12%;color:#93A7BC;font-size:1.05em}
+.scene-note{position:absolute;left:0;right:0;bottom:4%;text-align:center;color:#FDE68A;font-size:1.05em}
+.scene-lab{position:absolute;left:0;top:0;background:rgba(11,22,38,.82);border:1px solid rgba(147,167,188,.45);border-radius:.5em;padding:.25em .6em;white-space:nowrap;transition:opacity .4s;text-align:center;line-height:1.25}
+.scene-lab b{display:block;font-size:1.02em}
+.scene-lab span{display:block;color:#93A7BC;font-size:.82em}
+.scene-lab.side{transform-origin:left center;text-align:left;white-space:normal;width:21em;margin-left:10.5em}
+.scene-lab.bad{border-color:#F87171} .scene-lab.bad b{color:#FCA5A5}
+.scene-lab.good{border-color:#34D399} .scene-lab.good b{color:#6EE7B7}
+.scene-lab.big{font-size:1.25em;padding:.35em .9em}
+.scene-lab.pill{font-size:.85em}
+.scene-lab.pill span{font-size:.78em}
+.scene-lab.c b{color:#BAE6FD}
+</style>
+</head>
+<body>
+
+
+<header class="top"><div class="wrap">
+  <div class="bar">
+    <a class="home" href="../index.html">← All chapters</a>
+    <h1 id="chTitle"><small id="chNum"></small><span></span></h1>
+    <button class="idx" id="idxChip" type="button" title="Your learning index for this chapter"><b id="idxVal">0</b><span id="idxLvl">Novice</span></button>
+  </div>
+  <nav class="menu" id="menu" aria-label="Chapter sections"></nav>
+</div></header>
+<main class="wrap" id="main"></main>
+
+<script src="../assets/three.min.js"></script>
+<script src="../assets/scenes.js"></script>
+<script>
+const CH = {"id": "ch04", "num": "4", "title": "AI Ethics in Cybersecurity: Accountability, Trust and Human Oversight", "summary": "Why ethics is harder in security, the four principles that hold up ethical AI security, building them in from the start, who is responsible when AI gets it wrong, when to trust it, and how to keep humans genuinely in control.", "outcomes": ["Explain why AI ethics is especially hard in cybersecurity", "Apply fairness, transparency, privacy and beneficence to an AI security system", "Place ethics activities in each stage of development", "Diagnose the 'many hands' accountability gap and design accountability in", "Judge trust across four dimensions: performance, process, purpose and institution", "Choose human-in, on or out of the loop, and design oversight that isn't rubber-stamping"], "starter": [{"q": "Ethical AI is mainly about…", "o": ["Only following the law", "Several principles: fairness, transparency, privacy, beneficence and more", "Only avoiding bias"], "a": 1}, {"q": "Adding a human reviewer to an AI system automatically makes it accountable.", "o": ["True", "Only for large companies", "False: oversight needs the right design to work"], "a": 2}, {"q": "An AI tool is 99% accurate. Does that alone mean we should trust it?", "o": ["No: accuracy is only one dimension of trust", "Only if it's expensive", "Yes, always"], "a": 0}], "lessons": [{"title": "Why ethics is harder in security", "minutes": 2, "slides": [{"scene": {"type": "stats", "title": "Why ethics matters in AI security", "subtitle": "Source: ISACA State of Cybersecurity Survey 2023", "cols": 2, "items": [{"v": 78, "suf": "%", "label": "of security professionals are concerned about AI ethics"}, {"v": 34, "suf": "%", "label": "of organisations have formal ethical guidelines"}]}, "say": ["Welcome to Chapter 4, AI Ethics in Cybersecurity. I'm Sam.", "AI security tools don't just block malware. They make decisions about people.", "They decide what is watched and collected, which affects privacy. Who can enter systems and buildings. Who is flagged as an insider threat, which can affect hiring and dismissal. And whether someone is falsely accused or wrongly denied.", "According to the ISACA 2023 survey quoted in the chapter, 78 per cent of security professionals are concerned about AI ethics.", "Yet only 34 per cent of organisations have formal ethical guidelines.", "Concern is high, but preparation is low."], "hl": [null, null, null, null, null, null, null, null, 0, 1, -1]}, {"scene": {"type": "panels", "title": "Security creates unique ethical challenges", "items": [{"label": "Adversarial", "color": "#FBBF24", "lines": ["Attackers actively manipulate the AI", "Creates risks other domains don't face"]}, {"label": "Confidential", "color": "#F87171", "lines": ["Secrecy limits transparency", "Harder to explain decisions publicly"]}, {"label": "Time-critical", "color": "#38BDF8", "lines": ["Decisions in seconds", "Little time for careful review"]}]}, "say": ["Why is ethics harder in security than in, say, a film recommendation system? The chapter gives three reasons.", "First, the environment is adversarial. Attackers actively try to manipulate the AI, creating risks other fields don't face.", "Second, confidentiality. Security teams can't always explain how detection works without helping attackers. That limits the transparency that normally supports accountability.", "Third, time pressure. Responses must happen in seconds, leaving little time for careful ethical review.", "None of this excuses skipping ethics. It means ethics has to be designed in from the start, which is what the rest of this chapter is about."], "hl": [null, null, 0, 0, 1, 1, 1, 2, 2, -1, -1]}], "keyPoint": "Security AI makes decisions about people. Attackers, secrecy and speed make ethics harder — never optional.", "plain": ["AI security decisions affect privacy, access, jobs and civil liberties.", "Most professionals are concerned; few organisations have guidelines.", "Attackers, secrecy and speed make it harder to be fair and open."], "check": {"q": "Which is one of the chapter's three security-specific ethical challenges?", "o": ["Security data is never personal", "Security AI is always cheap", "Confidentiality constraints limit transparency"], "a": 2, "e": "The three are an adversarial environment, confidentiality constraints and time-critical decisions.", "retry": {"q": "What share of organisations had formal AI ethics guidelines in the survey?", "o": ["78%", "34%", "100%"], "a": 1, "e": "78% of professionals were concerned, but only 34% of organisations had guidelines."}}, "scenario": {"title": "The insider-threat tool", "setting": "Your company plans an AI tool that scores employees as possible insider threats.", "steps": [{"prompt": "A director says: 'It's just security, ethics doesn't apply.' What do you say?", "choices": [{"t": "Agree; security comes first", "s": 0, "fb": "No. Security needs don't remove ethical obligations."}, {"t": "It affects people's jobs and reputations, so ethics clearly applies", "s": 2, "fb": "Right. Employment and civil liberties are both at stake."}, {"t": "Ethics only applies to healthcare", "s": 0, "fb": "No. Any AI that affects people raises ethical questions."}]}, {"prompt": "Staff ask how the scoring works. Security wants to keep the details secret. What's a sensible balance?", "choices": [{"t": "Publish every detection rule", "s": 1, "fb": "Partly. Very open, but it helps insiders evade detection."}, {"t": "Tell staff nothing at all", "s": 0, "fb": "No. People need to know what is collected and how to appeal."}, {"t": "Explain what data is used and how to challenge a decision, without revealing detection details", "s": 2, "fb": "Right. That keeps transparency and redress without helping attackers."}]}]}}, {"title": "Four pillars of ethical AI security", "minutes": 2, "slides": [{"scene": {"type": "temple", "title": "Core ethical principles", "subtitle": "Figure 4.2", "roof": "Ethical AI security", "base": "Human dignity", "items": [{"label": "Fairness", "sub": "Non-discrimination · equal treatment · bias mitigation", "color": "#22D3EE"}, {"label": "Transparency", "sub": "Explainability · auditability · disclosure", "color": "#34D399"}, {"label": "Privacy", "sub": "Data protection · purpose limitation · consent", "color": "#A78BFA"}, {"label": "Beneficence", "sub": "Harm prevention · proportionality · welfare", "color": "#FB923C"}]}, "say": ["The chapter pictures ethical AI security as a temple held up by four pillars, all resting on human dignity.", "Fairness: treat people equally, avoid discrimination, and actively reduce bias.", "Transparency: the system can be explained, audited, and its use is disclosed.", "Privacy: protect data, use it only for its stated purpose, and respect consent.", "Beneficence: do good and prevent harm. That includes proportionality, meaning security measures should match the size of the threat.", "Take one pillar away and the roof tilts. Ethics is not just about bias; all four matter.", "The pillars also pull against each other. Transparency helps check fairness, but privacy limits how much you can reveal. Balancing them is part of the job."], "hl": [null, 0, 1, 2, 3, 3, 11, 11, -1, -1, -1]}], "keyPoint": "Fairness, transparency, privacy and beneficence hold up ethical AI security, resting on human dignity. All four matter, and they sometimes pull against each other.", "plain": ["Fairness: no unfair treatment.", "Transparency: decisions can be explained and checked.", "Privacy and beneficence: protect data, prevent harm, keep measures proportionate."], "check": {"q": "A system monitors every keystroke of all staff to catch rare low-level misuse. Which principle is most at stake?", "o": ["Beneficence, through proportionality", "Transparency only", "None"], "a": 0, "e": "Proportionality, part of beneficence, requires measures that match the threat level (and privacy is affected too).", "retry": {"q": "What sits at the foundation of the temple?", "o": ["Profit", "Human dignity", "Accuracy"], "a": 1, "e": "All four pillars rest on human dignity."}}, "scenario": {"title": "The fraud-detection system", "setting": "A bank's AI blocks card payments it suspects are fraud (Exercise 1 in the manual).", "steps": [{"prompt": "Customers from one postcode are blocked far more often, with no evidence of more fraud. Which pillar is failing?", "choices": [{"t": "Privacy", "s": 0, "fb": "No. The issue is unequal treatment."}, {"t": "Fairness", "s": 2, "fb": "Right. Unequal treatment without justification is a fairness problem."}, {"t": "None; the model is accurate overall", "s": 0, "fb": "No. Overall accuracy can hide unfair treatment of a group."}]}, {"prompt": "Blocked customers are told only 'Transaction declined'. What would improve transparency?", "choices": [{"t": "Show customers the full model code", "s": 1, "fb": "Partly. It's transparent, but unhelpful and could help fraudsters."}, {"t": "Nothing more is needed", "s": 0, "fb": "No. People need to understand and contest decisions."}, {"t": "Give a clear reason category and a way to challenge the decision", "s": 2, "fb": "Right. Explanation and a route to redress support transparency."}]}]}}, {"title": "Ethics by design", "minutes": 2, "slides": [{"scene": {"type": "flow", "title": "Ethics by design across the lifecycle", "subtitle": "Figure 4.3", "loop": "Continuous improvement feedback loop", "items": [{"label": "Requirements", "sub": "Stakeholder value analysis|Ethical impact assessment"}, {"label": "Design", "sub": "Value-sensitive design|Ethical architecture review"}, {"label": "Implementation", "sub": "Bias mitigation|Privacy-preserving build"}, {"label": "Testing", "sub": "Fairness testing|Ethical scenario validation"}, {"label": "Deployment", "sub": "Monitoring set-up|Grievance mechanisms"}], "note": "Ethics is not a checkpoint — it is an ongoing commitment"}, "say": ["When should ethics be considered? Not at the end. The chapter calls this ethics by design: ethics built into every stage.", "At requirements, analyse what different stakeholders value, and carry out an ethical impact assessment.", "At design, use value-sensitive design, which means building those values into the architecture, and hold an ethical architecture review.", "At implementation, reduce bias in data and models, and build privacy protection in.", "At testing, test fairness across groups, and run ethical scenarios: what happens if the system wrongly flags someone?", "At deployment, set up monitoring and a grievance mechanism, so people can complain and be heard.", "Then lessons from real use feed back into the next round of requirements. Ethics is not a checkpoint; it is an ongoing commitment."], "hl": [null, null, null, 0, 1, 2, 3, 4, -1, -1]}], "keyPoint": "Each development stage has its own ethics activity, and lessons from deployment feed back into requirements. Ethics is continuous, not a final checkpoint.", "plain": ["Start with what people value and what could go wrong.", "Build values into the design and the code.", "Test for fairness, then monitor and listen after launch."], "check": {"q": "At which stage does the chapter place 'grievance mechanisms'?", "o": ["Requirements", "Design", "Deployment"], "a": 2, "e": "Once deployed, people need a way to raise complaints and get redress.", "retry": {"q": "What is 'value-sensitive design'?", "o": ["Building stakeholders' values into the system's design", "Only testing at the end", "Designing the cheapest system"], "a": 0, "e": "It brings stakeholder values into design decisions."}}, "scenario": {"title": "The project plan", "setting": "A team building an AI phishing filter plans one ethics review the week before launch.", "steps": [{"prompt": "What do you recommend?", "choices": [{"t": "Skip ethics for a phishing filter", "s": 0, "fb": "No. It reads people's emails, so privacy and fairness matter."}, {"t": "Keep the single review", "s": 0, "fb": "No. That treats ethics as a checkpoint."}, {"t": "Add ethics activities at every stage, starting with an impact assessment", "s": 2, "fb": "Right. Problems found at the end are expensive or impossible to fix."}]}, {"prompt": "After launch, staff complain that legitimate emails from a partner country are often blocked. What should exist to handle this?", "choices": [{"t": "Nothing; the model is final", "s": 0, "fb": "No. Ethics by design includes continuous improvement."}, {"t": "A grievance mechanism and monitoring that feed fixes back into requirements", "s": 2, "fb": "Right. That is the deployment stage and the feedback loop."}, {"t": "Ask staff to stop emailing that country", "s": 0, "fb": "No. That shifts the harm onto people instead of fixing the system."}]}]}}, {"title": "Who is responsible? The accountability gap", "minutes": 2, "slides": [{"scene": {"type": "ring", "mode": "gap", "title": "The accountability gap", "subtitle": "Figure 4.4 · the 'many hands' problem", "center": {"label": "AI decision"}, "person": "Affected individual", "items": [{"label": "Data providers", "w": 4}, {"label": "Model developers", "w": 9}, {"label": "System engineers", "w": 5}, {"label": "Operators", "w": 3}, {"label": "Organisations", "w": 6}], "note": "Line thickness = influence on the decision"}, "say": ["An AI system wrongly flags someone as a threat. Who is responsible?", "The data providers? The model developers? The engineers who integrated it? The operators who acted on it? The organisation that bought it?", "Each played a part, so each can say: it wasn't really me. This is the many hands problem. When responsibility is spread across many actors, no single one can be held fully accountable.", "The chapter names three causes. Black-box opacity: complex AI is hard to explain.", "Temporal distance: choices made years ago in training still shape today's decisions.", "And role fragmentation: many people, each with partial responsibility.", "The fix is to design for accountability on purpose: clear roles, thorough logging, explanations, and redress, meaning a way to put things right for the person harmed.", "Explanations alone are not enough. Even a perfectly explained decision needs someone whose job it is to answer for it."], "hl": [null, null, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, null, null, null]}], "keyPoint": "When many hands shape an AI decision, nobody ends up accountable. Design accountability in: clear roles, logging, explanations and redress.", "plain": ["Many people contribute, so everyone can blame someone else.", "Opacity, time and split roles make it worse.", "Fix it with named roles, logs, explanations and a way to put things right."], "check": {"q": "Which three factors does the chapter say create the accountability gap?", "o": ["Encryption, hashing and signing", "Cost, speed and size", "Black-box opacity, temporal distance, role fragmentation"], "a": 2, "e": "These three spread and hide responsibility.", "retry": {"q": "Does explainable AI alone solve the accountability problem?", "o": ["Only for small systems", "No: roles, logging and redress are still needed", "Yes, completely"], "a": 1, "e": "Explanations support accountability but don't assign responsibility."}}, "scenario": {"title": "The wrongly blocked engineer", "setting": "An AI access-control system locks an engineer out of a power station control room during an emergency. It was a false alarm.", "steps": [{"prompt": "The engineer asks who is responsible. What should already exist?", "choices": [{"t": "Blame the operator on shift", "s": 1, "fb": "Partly. Operators share responsibility, but the gap is about the whole chain."}, {"t": "A named owner for the system, logs of the decision, and a redress process", "s": 2, "fb": "Right. These close the accountability gap."}, {"t": "A statement that the AI decided, so nobody is responsible", "s": 0, "fb": "No. That is the many hands problem in action."}]}, {"prompt": "The vendor says the model was trained three years ago by a team that has left. Which cause is this?", "choices": [{"t": "Role fragmentation only", "s": 0, "fb": "No. The key point is the gap in time."}, {"t": "Temporal distance", "s": 2, "fb": "Right. Old decisions still shape today's behaviour."}, {"t": "Black-box opacity", "s": 1, "fb": "Partly related, but the issue named here is time."}]}]}}, {"title": "When should we trust the AI?", "minutes": 2, "slides": [{"scene": {"type": "ring", "mode": "quad", "title": "Four dimensions of trust", "subtitle": "Figure 4.6 · strength in one cannot make up for weakness in another", "center": {"label": "Justified confidence"}, "satR": 112, "items": [{"label": "Performance trust", "sub": "Works accurately and reliably", "color": "#22D3EE"}, {"label": "Process trust", "sub": "Built and run to sound standards", "color": "#34D399"}, {"label": "Purpose trust", "sub": "Aims aligned with ours, openly", "color": "#A78BFA"}, {"label": "Institutional trust", "sub": "Governance and culture behind it", "color": "#FB923C"}]}, "say": ["Should a security team trust its AI? The chapter's answer is: only with justified confidence, built across four dimensions.", "Performance trust: does it work? Is it accurate and reliable?", "Process trust: was it built, tested and operated to sound standards?", "Purpose trust: are its goals aligned with ours, and are they open?", "Institutional trust: does the organisation behind it have good governance and culture?", "The key insight is that strength in one cannot make up for weakness in another. Ninety-nine per cent accuracy does not help if the tool's purpose is hidden, or the vendor has poor governance.", "The instructor manual lists ways to check: independent audits, certification, continuous monitoring, transparency reports, and standards like ISO/IEC 42001. No single check is enough.", "And note that trusting an AI system is not like trusting a person. It must be earned and verified."], "hl": [null, null, 0, 0, 1, 2, 3, -1, -1, -1, -1, -1, -1]}], "keyPoint": "Justified confidence needs performance, process, purpose and institutional trust — all four. High accuracy alone is not enough.", "plain": ["Performance: does it work?", "Process: was it built properly? Purpose: what is it for?", "Institution: who stands behind it, and how are they run?"], "check": {"q": "A vendor proves 99% accuracy but won't explain what data their tool collects or why. Which trust dimension is weakest?", "o": ["Purpose trust", "Performance trust", "None"], "a": 0, "e": "Performance is strong, but purpose and openness are missing, and strength in one can't compensate.", "retry": {"q": "Which is an example of a check that supports institutional or process trust?", "o": ["A higher accuracy score", "Certification against ISO/IEC 42001", "A bigger model"], "a": 1, "e": "Standards and certification provide independent assurance."}}, "scenario": {"title": "Buying an AI SOC tool", "setting": "Your SOC is choosing between two AI detection tools.", "steps": [{"prompt": "Tool A: 97% accurate, independently audited, clear purpose. Tool B: 99% accurate, no audits, vague purpose. Which?", "choices": [{"t": "Tool B: accuracy is all that matters", "s": 0, "fb": "No. That is a common misconception."}, {"t": "Tool A: it is stronger across all four dimensions", "s": 2, "fb": "Right. Two points of accuracy can't make up for missing process and purpose trust."}, {"t": "Neither, ever", "s": 1, "fb": "Partly cautious, but Tool A gives justified confidence."}]}, {"prompt": "After purchase, how do you keep trust justified?", "choices": [{"t": "Trust it forever once bought", "s": 0, "fb": "No. Performance and purpose can drift."}, {"t": "Continuous monitoring, periodic audits and transparency reports", "s": 2, "fb": "Right. Trust must keep being verified."}, {"t": "Rely on the vendor's word", "s": 0, "fb": "No. Independent checks are needed."}]}]}}, {"title": "In, on or out of the loop", "minutes": 2, "slides": [{"scene": {"type": "spectrum", "title": "Human–AI interaction models", "subtitle": "Figure 4.7 · as speed and scale rise, direct control falls", "leftLabel": "High human control", "rightLabel": "High AI autonomy", "items": [{"label": "Human-in-the-loop", "sub": "Human approval needed|before the AI acts", "best": "high-stakes, irreversible decisions", "color": "#22D3EE"}, {"label": "Human-on-the-loop", "sub": "AI acts on its own|Human monitors and steps in", "best": "speed matters, oversight still important", "color": "#34D399"}, {"label": "Human-out-of-loop", "sub": "Full automation|Periodic human review", "best": "routine tasks, low cost of error", "color": "#A78BFA"}]}, "say": ["How much control should a human keep? The chapter describes a spectrum.", "Human-in-the-loop: the AI recommends, but a human must approve before anything happens. Best for high-stakes or irreversible decisions.", "Human-on-the-loop: the AI acts on its own, while a human watches and can step in. Best when speed matters but oversight is still important.", "Human-out-of-the-loop: full automation, with only periodic review. Best for routine tasks where mistakes are cheap.", "As speed and scale rise, direct control falls. The right choice depends on the risk, how fast a response is needed, and the ethical stakes.", "Picture a security operations centre facing fifty thousand alerts a day. Human-in-the-loop for all of them is impossible.", "So routine blocking might run on the loop, while locking a hospital's clinical system stays firmly in the loop.", "More human control is not automatically more ethical. It only helps if the human can genuinely do the job, which is our final lesson."], "hl": [null, null, 0, 0, 1, 1, 2, 2, -1, -1, 0, 0, 1, 1, 1]}], "keyPoint": "In = approve first; on = watch and step in; out = review later. Choose by risk, speed and ethical stakes.", "plain": ["In the loop: nothing happens without a human yes.", "On the loop: the AI acts; a human can stop it.", "Out of the loop: automatic, checked from time to time."], "check": {"q": "An AI blocks a known malicious IP address within milliseconds while an analyst watches a dashboard. Which model is this?", "o": ["Human-out-of-loop", "Human-in-the-loop", "Human-on-the-loop"], "a": 2, "e": "The AI acts autonomously and a human monitors and can intervene.", "retry": {"q": "Which model suits a high-stakes, irreversible decision?", "o": ["Human-in-the-loop", "Human-out-of-loop", "Any"], "a": 0, "e": "A human should approve before irreversible action."}}, "scenario": {"title": "Choosing the loop", "setting": "You are setting the oversight model for three AI security actions.", "steps": [{"prompt": "Quarantining the CEO's laptop during a board meeting, on a medium-confidence alert:", "choices": [{"t": "Ignore the alert", "s": 0, "fb": "No. It still needs investigating."}, {"t": "Fully automatic", "s": 0, "fb": "No. The impact is high and confidence only medium."}, {"t": "Human-in-the-loop: an analyst approves first", "s": 2, "fb": "Right. High impact on a person and the business, and not urgent to the millisecond."}]}, {"prompt": "Deleting known spam emails, millions per day:", "choices": [{"t": "Human-on-the-loop", "s": 1, "fb": "Partly. Workable, but heavier than this low-risk task needs."}, {"t": "Human approval for every email", "s": 0, "fb": "No. Impossible at this scale, and it would cause rubber-stamping."}, {"t": "Human-out-of-loop with periodic review", "s": 2, "fb": "Right. Routine, high-volume and low cost of error."}]}]}}, {"title": "Oversight that actually works", "minutes": 2, "slides": [{"scene": {"type": "flow", "title": "Designing effective human oversight", "subtitle": "Figure 4.8 · four requirements for meaningful control", "items": [{"label": "Information design", "sub": "Actionable, clear|Matched to expertise", "color": "#22D3EE"}, {"label": "Workload management", "sub": "Prioritise, batch|Escalate", "color": "#34D399"}, {"label": "Authority", "sub": "Override the AI|Change parameters|Escalate", "color": "#A78BFA"}, {"label": "Feedback loops", "sub": "Overrides improve|the system", "color": "#FB923C"}], "note": "Without these, oversight becomes rubber-stamping: false assurance, no real protection"}, "say": ["Putting a human in charge only helps if that human can really do the job. The chapter gives four requirements.", "Information design. Show the operator clear, actionable information, matched to their expertise, not a wall of raw data.", "Workload management. Prioritise, batch and escalate alerts, so people aren't buried.", "Authority and empowerment. Operators must be able to override the AI, change its settings, and raise concerns without fear.", "Feedback loops. When an operator overrides the AI, that lesson should flow back to improve the system.", "Without these, oversight becomes rubber-stamping. A tired analyst clicks approve on hundreds of alerts they can't really check.", "The chapter warns that this is worse than useless. It gives false assurance, a feeling of control with no real protection.", "To sum up the chapter: build in the four principles, design accountability, earn trust on all four dimensions, and give humans real control. Regulation is moving the same way. The EU AI Act of 2024 requires human oversight and accountability for many systems, and ISO/IEC 42001 sets out an AI management system standard."], "hl": [null, null, 0, 0, 1, 1, 2, 2, 3, 3, -1, -1, -1, -1, -1, -1, -1]}], "keyPoint": "Meaningful oversight = clear information + manageable workload + real authority + feedback. Without them, a human reviewer is just a rubber stamp.", "plain": ["Give people information they can act on.", "Don't drown them in alerts.", "Let them override the AI, and learn from it when they do."], "check": {"q": "An analyst approves 400 AI decisions an hour without looking closely. What is this called?", "o": ["Human-out-of-loop", "Feedback loop", "Rubber-stamping"], "a": 2, "e": "It looks like oversight but provides false assurance.", "retry": {"q": "Which requirement ensures operators can overrule the AI?", "o": ["Workload management", "Authority and empowerment", "Information design"], "a": 1, "e": "Operators need genuine power to override, adjust and escalate."}}, "scenario": {"title": "The overloaded SOC", "setting": "Your SOC uses human-in-the-loop for all AI alerts. Each analyst reviews about 900 a shift, approving almost all of them.", "steps": [{"prompt": "What is the main problem?", "choices": [{"t": "There is no problem; approvals are high", "s": 0, "fb": "No. High approval rates can signal rubber-stamping."}, {"t": "The analysts are lazy", "s": 0, "fb": "No. The design, not the people, is at fault."}, {"t": "Rubber-stamping: the workload makes real review impossible", "s": 2, "fb": "Right. The oversight is giving false assurance."}]}, {"prompt": "Which change helps most?", "choices": [{"t": "Hire one more analyst", "s": 1, "fb": "Partly. It helps a little, but the design problem remains."}, {"t": "Prioritise and batch alerts, move routine ones on the loop, and keep humans for high-risk cases", "s": 2, "fb": "Right. It matches oversight to risk and manages workload."}, {"t": "Remove humans entirely", "s": 0, "fb": "No. High-risk decisions still need meaningful human control."}]}]}}], "test": [{"q": "Which is NOT one of the chapter's security-specific ethical challenges?", "o": ["Time-critical decisions", "Adversarial environment", "Security data is never personal"], "a": 2, "e": "Security data is often personal.", "lesson": 0}, {"q": "Proportionality belongs to which pillar?", "o": ["Fairness", "Beneficence", "Transparency"], "a": 1, "e": "Measures should match the threat level.", "lesson": 1}, {"q": "Purpose limitation and consent belong to which pillar?", "o": ["Privacy", "Beneficence", "Fairness"], "a": 0, "e": "They are part of data protection.", "lesson": 1}, {"q": "Ethical impact assessment belongs at which stage?", "o": ["Testing", "Requirements", "Deployment"], "a": 1, "e": "It starts the lifecycle.", "lesson": 2}, {"q": "Fairness testing and ethical scenario validation happen at…", "o": ["Requirements", "Design", "Testing"], "a": 2, "e": "Figure 4.3.", "lesson": 2}, {"q": "The 'many hands' problem means…", "o": ["Responsibility is spread so nobody is fully accountable", "Too many people use the system", "The AI has many inputs"], "a": 0, "e": "Distributed responsibility creates the gap.", "lesson": 3}, {"q": "Redress means…", "o": ["Re-training the model", "Deleting logs", "A way to put things right for the person harmed"], "a": 2, "e": "Part of designing accountability.", "lesson": 3}, {"q": "Which dimension of trust asks 'was it built and run to sound standards?'", "o": ["Purpose trust", "Process trust", "Performance trust"], "a": 1, "e": "Process trust.", "lesson": 4}, {"q": "Strength in one trust dimension…", "o": ["Cannot compensate for weakness in another", "Makes the others unnecessary", "Only matters for accuracy"], "a": 0, "e": "All four are needed.", "lesson": 4}, {"q": "In human-on-the-loop, the AI…", "o": ["Is never reviewed", "Acts autonomously while a human monitors and can intervene", "Waits for approval"], "a": 1, "e": "Figure 4.7.", "lesson": 5}, {"q": "Which requirement prevents operators from being buried in alerts?", "o": ["Feedback loops", "Authority", "Workload management"], "a": 2, "e": "Prioritisation, batching and escalation.", "lesson": 6}, {"q": "Why is rubber-stamping worse than no oversight?", "o": ["It gives false assurance while offering no real protection", "It costs more", "It is slower"], "a": 0, "e": "People believe there is control when there isn't.", "lesson": 6}]};
+const $ = s => document.querySelector(s);
+function h(tag, attrs, ...kids){ const e=document.createElement(tag); if(attrs) for(const [k,v] of Object.entries(attrs)){ if(k==='class') e.className=v; else if(k==='html') e.innerHTML=v; else if(k.startsWith('on')) e.addEventListener(k.slice(2),v); else if(v!==false&&v!=null) e.setAttribute(k,v===true?'':v);} for(const k of kids.flat()) if(k!=null&&k!==false) e.append(k.nodeType?k:document.createTextNode(k)); return e; }
+const pad = n => String(n).padStart(2,'0');
+const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+const pct = x => Math.round(100*x);
+function seg(options, value, onChange, label){ const w = h('div',{class:'seg',role:'group','aria-label':label||''}); const bs = options.map(([v,t]) => { const b = h('button',{type:'button','aria-pressed':String(v===value)}, t); b.onclick = () => { bs.forEach(x=>x.setAttribute('aria-pressed','false')); b.setAttribute('aria-pressed','true'); onChange(v); }; return b; }); w.append(...bs); return w; }
+
+/* ---------------- learner state ---------------- */
+const KEY = 'aic:' + CH.id;
+const blank = () => ({ v:2, starter:null, plan:null, lessons:{}, test:null, secs:0, updated:0, name:'' });
+let S;
+try { S = Object.assign(blank(), JSON.parse(localStorage.getItem(KEY) || 'null') || {}); } catch(e){ S = blank(); }
+function save(){ S.updated = Date.now(); S.meta = {title:CH.title, num:CH.num, index:metrics().index, level:metrics().level, lessons:CH.lessons.length, done:Object.values(S.lessons).filter(l=>l.done).length, test:!!S.test};
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} renderChip(); renderMenu(); }
+function L(i){ return S.lessons[i] || (S.lessons[i] = {watched:false, check:null, retry:null, caseScore:0, caseMax:0, caseDone:false, done:false, secs:0}); }
+
+/* ---------------- metrics (Learning Index) ----------------
+   Knowledge 35%: first-attempt quick checks + latest final-test answers correct
+   Application 35%: points earned in case simulations (each choice 0–2)
+   Self-awareness 15%: how often your confidence matched your answer (sure & right, or unsure & wrong)
+   Completion 15%: lessons completed + final test taken
+   Levels follow Benner's novice-to-expert stages (shortened for a short course). */
+const LEVELS = [[0,'Novice','Starting out: knows the words, needs support to apply them'],[40,'Advanced beginner','Recognises the main ideas in familiar cases'],[60,'Competent','Applies the ideas to new cases and asks the right questions'],[80,'Proficient','Judges tools confidently and explains why to colleagues']];
+function metrics(){
+  const n = CH.lessons.length; let kOk=0,kN=0,aPts=0,aMax=0,cal=0,calN=0,done=0;
+  for (let i=0;i<n;i++){ const l = S.lessons[i]; if (!l) continue;
+    if (l.check){ kN++; if (l.check.ok) kOk++; if (l.check.conf){ calN++; if ((l.check.conf==='sure')===l.check.ok) cal++; } }
+    aPts += l.caseScore||0; aMax += l.caseDone ? (l.caseMax||0) : 0; if (l.done) done++; }
+  if (S.test){ S.test.answers.forEach(a=>{ kN++; if (a.ok) kOk++; if (a.conf){ calN++; if ((a.conf==='sure')===a.ok) cal++; } }); }
+  const K = kN? kOk/kN : 0, A = aMax? aPts/aMax : 0, C = calN? cal/calN : null, P = (done + (S.test?1:0))/(n+1);
+  const parts = [[K,.35],[A,.35],[P,.15]]; if (C!=null) parts.push([C,.15]);
+  const wsum = parts.reduce((x,p)=>x+p[1],0); const idx = Math.round(100*parts.reduce((x,p)=>x+p[0]*p[1],0)/wsum);
+  const lv = LEVELS.filter(l=>idx>=l[0]).pop();
+  return {K,A,C,P,index:idx,level:lv[1],levelText:lv[2],kN,aMax,calN,done,n};
+}
+
+/* ---------------- tutor + voice ---------------- */
+const TUTOR_SVG = `<svg viewBox="0 0 200 200"><defs><clipPath id="cc"><circle cx="100" cy="100" r="100"/></clipPath></defs><g clip-path="url(#cc)"><rect width="200" height="200" fill="var(--accent-soft)"/><path d="M14 205 C22 154 58 138 100 136 C142 138 178 154 186 205 Z" fill="#24364A"/><path d="M84 137 L100 168 L116 137 Z" fill="#EEF4F4"/><path d="M80 140 C70 166 80 182 94 184" fill="none" stroke="#9AA9AF" stroke-width="3.2" stroke-linecap="round"/><path d="M120 140 C130 166 120 182 106 184" fill="none" stroke="#9AA9AF" stroke-width="3.2" stroke-linecap="round"/><circle cx="100" cy="188" r="6" fill="#B8C4C8" stroke="#7F8E94" stroke-width="1.5"/><rect x="88" y="110" width="24" height="32" rx="9" fill="#A9714E"/><g class="tHead"><ellipse cx="70" cy="92" rx="5" ry="8" fill="#B87C58"/><ellipse cx="130" cy="92" rx="5" ry="8" fill="#B87C58"/><ellipse cx="100" cy="88" rx="30" ry="36" fill="#C48A63"/><path d="M66 92 C60 52 84 38 104 40 C128 40 142 58 134 94 C130 76 122 64 102 63 C84 63 72 72 66 92 Z" fill="#2B211C"/><path d="M67 88 C62 108 68 124 76 128 L76 96 Z" fill="#2B211C"/><path d="M133 88 C138 108 132 124 124 128 L124 96 Z" fill="#2B211C"/><path d="M81 76 Q89 72 96 76" fill="none" stroke="#2B211C" stroke-width="2.4" stroke-linecap="round"/><path d="M104 76 Q111 72 119 76" fill="none" stroke="#2B211C" stroke-width="2.4" stroke-linecap="round"/><g class="eyes"><ellipse cx="89" cy="86" rx="3.2" ry="3.6" fill="#1D1714"/><ellipse cx="111" cy="86" rx="3.2" ry="3.6" fill="#1D1714"/></g><circle cx="89" cy="86" r="9" fill="none" stroke="#3B3532" stroke-width="1.5"/><circle cx="111" cy="86" r="9" fill="none" stroke="#3B3532" stroke-width="1.5"/><path d="M98 86 L102 86" stroke="#3B3532" stroke-width="1.5"/><path d="M100 90 Q96 100 101 102" fill="none" stroke="#9C6646" stroke-width="1.8" stroke-linecap="round"/><ellipse class="mouth" cx="100" cy="112" rx="8" ry="1.4" fill="#6E3029"/><path class="smile" d="M92 111 Q100 115 108 111" fill="none" stroke="#6E3029" stroke-width="1.8" stroke-linecap="round"/></g></g></svg>`;
+const T = { el:null, open:0, target:0, speaking:false, hasBoundary:false, nextBlink:performance.now()+2500, blinkT:0 };
+function tick(now){
+  if (T.el && T.el.isConnected){
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (T.speaking && !T.hasBoundary && !reduce) T.target = 0.35 + 0.55*Math.abs(Math.sin(now/95))*(0.6+0.4*Math.sin(now/410));
+    if (!T.speaking) T.target = 0;
+    T.open += (T.target-T.open)*0.35; if (T.hasBoundary) T.target *= 0.86;
+    const o = reduce ? (T.speaking?0.3:0) : T.open;
+    const m = T.el.querySelector('.mouth'), sm = T.el.querySelector('.smile'), ey = T.el.querySelector('.eyes'), hd = T.el.querySelector('.tHead');
+    m.setAttribute('ry',(1.4+o*5.2).toFixed(2)); m.setAttribute('rx',(8-o*1.5).toFixed(2)); sm.style.opacity = o>0.15?0:1;
+    if (now > T.nextBlink){ T.blinkT = now; T.nextBlink = now + 2600 + Math.random()*3200; }
+    const b = now - T.blinkT, sy = b<140 ? Math.abs(1-2*b/140) : 1;
+    ey.setAttribute('transform',`translate(0 ${86*(1-sy)}) scale(1 ${Math.max(0.1,sy)})`);
+    const bob = T.speaking&&!reduce ? Math.sin(now/600)*1.2 : 0, tilt = T.speaking&&!reduce ? Math.sin(now/1300)*1.6 : 0;
+    hd.setAttribute('transform',`translate(0 ${bob.toFixed(2)}) rotate(${tilt.toFixed(2)} 100 120)`);
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+function setSpeaking(v){ T.speaking = v; if (T.el) T.el.classList.toggle('speaking', v); }
+const synth = 'speechSynthesis' in window ? window.speechSynthesis : null;
+let voices = [], voice = null;
+function pickVoice(){
+  if (!synth) return; voices = synth.getVoices().filter(v=>/^en/i.test(v.lang));
+  const pref = S.plan && S.plan.voice; const sorted = voices.slice().sort((a,b)=>(b.lang==='en-GB')-(a.lang==='en-GB'));
+  voice = pref==='__none' ? null : (sorted.find(v=>v.name===pref) || sorted.find(v=>v.lang==='en-GB') || sorted[0] || null);
+}
+if (synth){ pickVoice(); synth.addEventListener ? synth.addEventListener('voiceschanged', ()=>{ pickVoice(); if (curView && curView.startsWith('l')) refreshVoiceSel && refreshVoiceSel(); }) : (synth.onvoiceschanged = pickVoice); }
+const WPS = 2.55;
+const words = t => t.split(/\s+/).filter(Boolean).length;
+const rate = () => (S.plan && S.plan.rate) || 0.95;
+function sentences(arr){ return arr.flatMap(p => (p.match(/[^.!?]+[.!?]+["'”’]?\s*|[^.!?]+$/g) || [p]).map(x=>x.trim()).filter(Boolean)); }
+
+/* ---------------- navigation ---------------- */
+let curView = 'start';
+function views(){ return ['start', ...CH.lessons.map((_,i)=>'l'+i), 'final', 'progress']; }
+function renderMenu(){
+  const m = $('#menu'); m.innerHTML = '';
+  const add = (v, label, state) => { const b = h('button',{type:'button','aria-current':String(curView===v),onclick:()=>go(v)}, state!==undefined ? h('span',{class:'dot'+(state==='done'?' done':state==='part'?' part':'')}) : null, label); m.append(b); };
+  add('start','Start', S.plan ? 'done' : '');
+  CH.lessons.forEach((l,i)=>{ const st = S.lessons[i]; add('l'+i, `${i+1}. ${l.title}`, st ? (st.done?'done':(st.watched||st.check)?'part':'') : ''); });
+  add('final','Final case test', S.test ? 'done' : '');
+  add('progress','My progress');
+  const cur = m.querySelector('[aria-current="true"]'); if (cur) cur.scrollIntoView({block:'nearest',inline:'center'});
+}
+function renderChip(){ const M = metrics(); $('#idxVal').textContent = M.index; $('#idxLvl').textContent = M.level; }
+$('#idxChip').onclick = () => go('progress');
+let lessonTimer = null, lessonStart = 0;
+function go(v){
+  stopSpeech(); flushTime(); curView = v; const main = $('#main'); main.innerHTML = '';
+  if (v==='start') renderStart(main); else if (v==='final') renderFinal(main); else if (v==='progress') renderProgress(main); else renderLesson(main, +v.slice(1));
+  renderMenu(); renderChip(); window.scrollTo({top:0, behavior:'instant'});
+  try { history.replaceState(null,'','#'+v); } catch(e){}
+  if (v.startsWith('l')) lessonStart = Date.now();
+}
+function flushTime(){ if (curView && curView.startsWith('l') && lessonStart){ const s = Math.round((Date.now()-lessonStart)/1000); if (s>0 && s<3600){ L(+curView.slice(1)).secs += s; S.secs += s; save(); } lessonStart = 0; } }
+addEventListener('visibilitychange', ()=>{ if (document.hidden) flushTime(); else if (curView.startsWith('l')) lessonStart = Date.now(); });
+
+/* ---------------- START: personal plan ---------------- */
+function renderStart(main){
+  const plan = S.plan || {time:10, style:'listen', rate:0.95, voice:null};
+  main.append(h('div',null, h('div',{class:'eyebrow'}, CH.num==='A' ? 'Appendix A' : 'Chapter '+CH.num), h('h2',{style:'font-size:2rem;margin-top:4px'}, CH.title), h('p',{class:'lede',style:'margin-top:8px'}, CH.summary)));
+  main.append(h('div',{class:'card'}, h('h3',null,'What you will be able to do'), h('ul',{style:'margin:0;padding-left:20px'}, CH.outcomes.map(o=>h('li',null,o)))));
+  const ans = (S.starter && S.starter.answers) ? S.starter.answers.slice() : CH.starter.map(()=>null);
+  const sq = h('div',{style:'display:flex;flex-direction:column;gap:14px'});
+  CH.starter.forEach((q,i)=>{ const box = h('div',null, h('p',{class:'q'}, `${i+1}. ${q.q}`)); const opts = h('div',{class:'opts'});
+    q.o.forEach((o,j)=>{ const b = h('button',{class:'opt',type:'button','aria-pressed':String(ans[i]===j)}, o); if (ans[i]===j) b.style.borderColor='var(--accent)';
+      b.onclick = () => { ans[i]=j; opts.querySelectorAll('.opt').forEach(x=>{x.style.borderColor='';}); b.style.borderColor='var(--accent)'; }; opts.append(b); });
+    box.append(opts); sq.append(box); });
+  main.append(h('div',{class:'card'}, h('h3',null,'1. Where are you starting from?'), h('p',{class:'lede',style:'margin-bottom:12px'},'Three quick questions. There is no pass mark: your answers just set the right pace for you.'), sq));
+  const tSel = seg([[5,'5 minutes'],[10,'10 minutes'],[20,'20 minutes or more']], plan.time, v=>plan.time=v, 'Time per session');
+  const stSel = seg([['listen','Listen and watch'],['read','Read at my own pace']], plan.style, v=>plan.style=v, 'Learning style');
+  const rSel = seg([[0.8,'Slower'],[0.95,'Normal'],[1.15,'Faster']], plan.rate, v=>plan.rate=v, 'Speaking speed');
+  main.append(h('div',{class:'card'}, h('h3',null,'2. How do you like to learn?'),
+    h('div',{class:'plan',style:'gap:12px'}, h('div',null,h('b',null,'Time per sitting'),tSel), h('div',null,h('b',null,'Style'),stSel), h('div',null,h('b',null,'Speaking speed'),rSel))));
+  const out = h('div');
+  const btn = h('button',{class:'btn primary',type:'button'},'Make my plan');
+  btn.onclick = () => {
+    const score = CH.starter.reduce((a,q,i)=>a+(ans[i]===q.a?1:0),0);
+    S.starter = {answers:ans, score}; S.plan = Object.assign(plan, {path: score>=2 ? 'fast' : 'steady'}); save(); showPlan(out);
+  };
+  main.append(h('div',{class:'card'}, h('h3',null,'3. Your plan'), h('div',{class:'row',style:'margin-bottom:10px'}, btn), out));
+  if (S.plan) showPlan(out);
+}
+function showPlan(out){
+  const p = S.plan, n = CH.lessons.length; out.innerHTML = '';
+  const per = Math.max(1, Math.floor(p.time / ((p.style==='read'?1.5:2.2) + 2)));
+  const sessions = []; for (let i=0;i<n;i+=per) sessions.push([i, Math.min(n,i+per)-1]);
+  const pathTxt = p.path==='fast' ? 'Fast track. You already know some of this, so each lesson lets you skip straight to the check and case. The plain-words summaries stay folded unless you need them.' : 'Step by step. Each lesson shows a plain-words summary after Sam explains it, and gives you a second try if a question trips you up.';
+  out.append(h('div',{class:'plan'},
+    h('div',null,h('b',null,'Your path'), h('span',null, h('span',{class:'pill acc'}, p.path==='fast'?'Fast track':'Step by step'),' ', pathTxt)),
+    h('div',null,h('b',null,'Starter score'), h('span',null, `${S.starter.score} of ${CH.starter.length}`)),
+    h('div',null,h('b',null,'Sessions'), h('span',null, `${sessions.length} sittings of about ${p.time} minutes, then the final case test.`))),
+    h('div',{class:'advice',style:'margin-top:10px'}, sessions.map((s,k)=>h('div',null, h('b',{style:'min-width:80px'},'Sitting '+(k+1)), h('span',null, s[0]===s[1] ? `Lesson ${s[0]+1}: ${CH.lessons[s[0]].title}` : `Lessons ${s[0]+1}–${s[1]+1}: ${CH.lessons[s[0]].title} to ${CH.lessons[s[1]].title}`)))),
+    h('div',{class:'row',style:'margin-top:12px'}, h('button',{class:'btn primary',type:'button',onclick:()=>go('l'+firstUnfinished())}, firstUnfinished()===0 && !S.lessons[0] ? 'Start lesson 1' : 'Continue: lesson '+(firstUnfinished()+1)), h('span',{class:'lede',style:'font-size:.88rem'},'You can change any of this later. Your progress is saved in this browser only.')));
+}
+function firstUnfinished(){ for (let i=0;i<CH.lessons.length;i++) if (!(S.lessons[i]&&S.lessons[i].done)) return i; return CH.lessons.length-1; }
+
+/* ---------------- LESSON ---------------- */
+let player = null, refreshVoiceSel = null;
+function stopSpeech(){ if (player){ player.stop(); } }
+function renderLesson(main, i){
+  const les = CH.lessons[i], st = L(i), plan = S.plan || {path:'steady', style:'listen'};
+  if (!S.plan) main.append(h('div',{class:'card',style:'background:var(--info-soft)'}, h('p',null,'Tip: set your pace and style on the ', h('a',{href:'#start',onclick:e=>{e.preventDefault();go('start');}},'Start'),' page first. It takes a minute.')));
+  const stepsEl = h('div',{class:'steps'});
+  function renderSteps(){ stepsEl.innerHTML=''; [['Watch',st.watched],['Check',!!st.check],['Case',st.caseDone]].forEach(([t,ok],k)=>stepsEl.append(h('span',{class: ok?'ok':''}, (ok?'✓ ':(k+1)+'. ')+t))); }
+  renderSteps();
+  main.append(h('div',null, h('div',{class:'eyebrow'}, `Lesson ${i+1} of ${CH.lessons.length} · about ${les.minutes||2} minutes`), h('h2',{style:'font-size:1.8rem;margin:4px 0 8px'}, les.title), stepsEl));
+
+  // --- WATCH
+  const slides = les.slides; const sents = slides.map(s=>sentences(s.say));
+  let si = 0, ui = 0, playing = false, token = 0, timers = [], mode = plan.style === 'read' ? 'read' : 'listen';
+  const img = h('img',{alt:''}); const sceneHost = h('div',{class:'scenehost'}); let curScene = null; const tag = h('span',{class:'slidetag'}); const big = h('button',{class:'bigplay',type:'button'}, h('span',{class:'c'}, h('span',{html:'<svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l13 8-13 8z" fill="#fff"/></svg>'})), h('span',null,'Play lesson'));
+  const stage = h('div',{class:'stage'}, img, sceneHost, tag, big);
+  const tutorEl = h('div',{class:'tutor','aria-hidden':'true',html:TUTOR_SVG}); T.el = tutorEl;
+  const cap = h('div',{class:'cap','aria-live':'polite'});
+  const readBox = h('div',{class:'read'});
+  const speakRow = h('div',{class:'speaker'}, h('div',{class:'tutor-wrap'}, tutorEl, h('span',null,'Sam, your tutor')), cap);
+  const playBtn = h('button',{class:'btn primary',type:'button'},'Play');
+  const prevBtn = h('button',{class:'btn',type:'button'},'◀ Back'), nextBtn = h('button',{class:'btn',type:'button'},'Next ▶');
+  const voiceSel = h('select',{id:'voiceSel','aria-label':'Voice'});
+  refreshVoiceSel = () => { voiceSel.innerHTML=''; voiceSel.append(h('option',{value:'__none'},'No voice: captions only')); voices.slice().sort((a,b)=>(b.lang==='en-GB')-(a.lang==='en-GB')).forEach(v=>voiceSel.append(h('option',{value:v.name},`${v.name} (${v.lang})`))); voiceSel.value = voice ? voice.name : '__none'; };
+  refreshVoiceSel();
+  voiceSel.onchange = () => { S.plan = S.plan || {path:'steady',style:'listen',time:10,rate:0.95}; S.plan.voice = voiceSel.value; save(); pickVoice(); if (playing){ stop(); play(); } };
+  const rateSel = seg([[0.8,'Slower'],[0.95,'Normal'],[1.15,'Faster']], rate(), v=>{ S.plan = S.plan || {path:'steady',style:'listen',time:10}; S.plan.rate = v; save(); if (playing){ stop(); play(); } }, 'Speed');
+  const modeSel = seg([['listen','Listen'],['read','Read']], mode, v=>{ stop(); mode = v; layout(); }, 'Mode');
+  const plainBtn = h('button',{class:'btn small',type:'button'},'Explain more simply');
+  const ctrls = h('div',{class:'ctrls'}, prevBtn, playBtn, nextBtn, h('span',{class:'grow'}), modeSel, rateSel, h('label',null,'Voice', voiceSel));
+  const plainCard = h('div',{class:'plain',hidden:true}, h('b',null,'In plain words'), h('ul',null, les.plain.map(p=>h('li',null,p))));
+  const keyCard = h('div',{class:'key',hidden:!st.watched}, h('b',{class:'k'},'Key point'), h('p',null, les.keyPoint));
+  const skipBtn = h('button',{class:'btn small',type:'button',onclick:()=>{ stop(); markWatched(); checkCard.scrollIntoView({behavior:'smooth'}); }}, 'I know this: skip to the check');
+  plainBtn.onclick = () => { plainCard.hidden = !plainCard.hidden; plainBtn.textContent = plainCard.hidden ? 'Explain more simply' : 'Hide plain words'; };
+  const watchCard = h('div',{class:'card'}, stage, speakRow, readBox, ctrls, h('div',{class:'row',style:'margin-top:10px'}, plainBtn, plan.path==='fast' ? skipBtn : null), h('div',{style:'margin-top:10px'}, plainCard));
+  main.append(watchCard, keyCard);
+  function layout(){ speakRow.hidden = mode!=='listen'; readBox.hidden = mode!=='read'; playBtn.hidden = mode!=='listen'; big.hidden = mode!=='listen' || playing; rateSel.hidden = mode!=='listen'; voiceSel.parentNode.hidden = mode!=='listen'; showSlide(); }
+  function showSlide(){
+    if (curScene){ curScene.dispose(); curScene = null; }
+    if (slides[si].scene && window.Scenes){ img.hidden = true; img.removeAttribute('src'); sceneHost.hidden = false; curScene = Scenes.mount(sceneHost, slides[si].scene); }
+    else { sceneHost.hidden = true; img.hidden = false; img.src = `slides/s-${pad(slides[si].img)}.jpg`; img.alt = `Slide for ${les.title}`; } tag.textContent = `${si+1} / ${slides.length}`;
+    prevBtn.disabled = si===0; nextBtn.textContent = si===slides.length-1 ? (mode==='read' ? 'Finish reading ✓' : 'Next ▶') : 'Next ▶';
+    nextBtn.disabled = mode==='listen' && si===slides.length-1;
+    if (mode==='read'){ readBox.innerHTML=''; slides[si].say.forEach(p=>readBox.append(h('p',null,p))); }
+    else caption(-1);
+  }
+  function caption(ci){ cap.innerHTML=''; const t = sents[si][ui]||''; let pos=0; t.split(/(\s+)/).forEach(part=>{ if(!part.trim()){cap.append(part);pos+=part.length;return;} const s0=pos,e0=pos+part.length; pos=e0; cap.append(h('span',{class: ci<0?'w':(ci>=e0?'w past':ci>=s0?'w now':'w')},part)); }); }
+  function clear(){ timers.forEach(clearTimeout); timers=[]; }
+  function stop(){ playing=false; token++; clear(); if (synth) synth.cancel(); setSpeaking(false); playBtn.textContent='Play'; }
+  function play(){ if (playing) return; playing = true; big.hidden = true; playBtn.textContent='Pause'; speak(); }
+  function speak(){
+    const tok = ++token; clear(); const text = sents[si][ui]; caption(-1); if (curScene && slides[si].hl && slides[si].hl[ui] !== undefined) curScene.highlight(slides[si].hl[ui]);
+    const est = words(text)/(WPS*rate())*1000; const done = () => { if (tok!==token) return; setSpeaking(false); advance(); };
+    if (synth && voice){
+      const u = new SpeechSynthesisUtterance(text); u.voice = voice; u.lang = voice.lang; u.rate = rate(); T.hasBoundary = false;
+      u.onstart = () => { if (tok===token) setSpeaking(true); };
+      u.onboundary = e => { if (tok!==token || e.name==='sentence') return; T.hasBoundary = true; T.target = 0.55+Math.random()*0.45; caption(e.charIndex); };
+      u.onend = done; u.onerror = e => { if (tok!==token || e.error==='interrupted' || e.error==='canceled') return; silent(tok,text,est); };
+      synth.speak(u);
+      timers.push(setTimeout(()=>{ if (tok===token && !T.speaking && !synth.speaking) silent(tok,text,est); }, 2500));
+      timers.push(setTimeout(done, est*2.2+4000));
+    } else silent(tok,text,est);
+  }
+  function silent(tok,text,est){ if (tok!==token) return; clear(); T.hasBoundary=false; setSpeaking(true);
+    const starts=[]; let pos=0; text.split(/(\s+)/).forEach(p=>{ if(p.trim()) starts.push(pos); pos+=p.length; });
+    starts.forEach((c,k)=>timers.push(setTimeout(()=>{ if(tok===token) caption(c); }, est*k/starts.length)));
+    timers.push(setTimeout(()=>{ if(tok!==token) return; setSpeaking(false); advance(); }, est+250)); }
+  function advance(){ if (!playing) return; ui++;
+    if (ui >= sents[si].length){ if (si >= slides.length-1){ stop(); markWatched(); return; } si++; ui=0; showSlide(); const tok=token; timers.push(setTimeout(()=>{ if(playing&&tok===token) speak(); }, 900)); return; }
+    speak(); }
+  function markWatched(){ if (!st.watched){ st.watched = true; save(); renderSteps(); } keyCard.hidden = false; if (plan.path!=='fast') { plainCard.hidden = false; plainBtn.textContent='Hide plain words'; } cap.innerHTML = '<b>End of the lesson.</b> Now try the quick check below.'; }
+  playBtn.onclick = () => playing ? stop() : play(); big.onclick = play;
+  prevBtn.onclick = () => { const was = playing; stop(); si = Math.max(0, si-1); ui=0; showSlide(); if (was) play(); };
+  nextBtn.onclick = () => { if (mode==='read' && si===slides.length-1){ markWatched(); checkCard.scrollIntoView({behavior:'smooth'}); return; } const was = playing; stop(); si = Math.min(slides.length-1, si+1); ui=0; showSlide(); if (was) play(); };
+  player = {stop};
+
+  // --- CHECK (with confidence and adaptive second chance)
+  const checkCard = h('div',{class:'card'}); main.append(checkCard);
+  function renderCheck(){
+    checkCard.innerHTML=''; checkCard.append(h('div',{class:'eyebrow'},'Quick check'));
+    const c = les.check;
+    if (st.check){ // already answered: show summary + allow retry practice
+      checkCard.append(h('p',{class:'q'}, c.q), h('p',{class:'fb'}, st.check.ok ? h('span',{class:'pill good'},'Right first time') : h('span',{class:'pill warn'},'Missed first time'), ' ', c.e),
+        st.retry ? h('p',{class:'fb'}, 'Second chance: ', st.retry.ok ? h('span',{class:'pill good'},'right') : h('span',{class:'pill bad'},'missed')) : null,
+        h('div',{class:'row',style:'margin-top:8px'}, h('button',{class:'btn small',type:'button',onclick:()=>{ askQuestion(checkCard, c, true, ()=>{}); }},'Practise again (not scored)')));
+      return;
+    }
+    askQuestion(checkCard, c, false, (ok, conf) => {
+      st.check = {ok, conf}; save(); renderSteps();
+      if (!ok && c.retry){
+        plainCard.hidden = false; plainBtn.textContent='Hide plain words';
+        const r = h('div',{style:'margin-top:14px'}, h('div',{class:'plain'}, h('b',null,'Let\'s look at it another way'), h('ul',null, les.plain.map(p=>h('li',null,p)))));
+        const rq = h('div',{style:'margin-top:12px'}); r.append(h('div',{class:'eyebrow',style:'margin-top:12px'},'Second chance'), rq); checkCard.append(r);
+        askQuestion(rq, c.retry, false, (ok2) => { st.retry = {ok:ok2}; save(); if (!ok2) rq.append(h('p',{class:'fb'}, h('span',{class:'pill warn'},'Tip'),' Try the lesson again in Read mode, at your own pace. It is marked for review on your progress page.')); caseCard.hidden=false; }, true);
+      } else caseCard.hidden = false;
+    });
+  }
+  // --- CASE simulation
+  const caseCard = h('div',{class:'card',hidden: !st.check}); main.append(caseCard);
+  function renderCase(){
+    const sc = les.scenario; caseCard.innerHTML='';
+    caseCard.append(h('div',{class:'eyebrow'},'Case simulation'), h('h3',null, sc.title), h('p',{class:'case-set'}, sc.setting));
+    const maxPts = sc.steps.length*2; let pts = 0, k = 0;
+    const host = h('div'); caseCard.append(host);
+    if (st.caseDone){ host.append(h('p',{class:'fb'}, h('span',{class: st.caseScore>=maxPts*0.75?'pill good':st.caseScore>=maxPts/2?'pill warn':'pill bad'}, `You scored ${st.caseScore} of ${maxPts}`), ' ', h('button',{class:'btn small',type:'button',onclick:()=>{ st.caseDone=false; st.caseScore=0; save(); renderCase(); }},'Try the case again'))); finishRow(); return; }
+    function step(){
+      const s = sc.steps[k]; const box = h('div',{class:'stepbox'}, h('p',{class:'q'}, `${k+1}. ${s.prompt}`)); const opts = h('div',{class:'opts'}); const fb = h('div',{class:'fb'});
+      s.choices.forEach(ch => { const b = h('button',{class:'opt',type:'button'}, ch.t); b.onclick = () => {
+        opts.querySelectorAll('.opt').forEach(x=>x.disabled=true); b.classList.add(ch.s===2?'right':ch.s===1?'part':'wrong');
+        if (ch.s<2){ const best = s.choices.find(c=>c.s===2); if (best) [...opts.children].find(x=>x.textContent===best.t).classList.add('right'); }
+        pts += ch.s; fb.innerHTML = `<b>${ch.s===2?'Good call.':ch.s===1?'Partly.':'Not the best choice.'}</b> ${ch.fb}`;
+        k++; if (k < sc.steps.length) step(); else { st.caseDone = true; st.caseScore = pts; st.caseMax = maxPts; st.done = st.done || !!st.check; save(); renderSteps();
+          host.append(h('p',{class:'fb',style:'margin-top:12px'}, h('span',{class: pts>=maxPts*0.75?'pill good':pts>=maxPts/2?'pill warn':'pill bad'}, `Case score: ${pts} of ${maxPts}`))); finishRow(); } };
+        opts.append(b); });
+      box.append(opts, fb); host.append(box);
+    }
+    step();
+  }
+  function finishRow(){
+    st.done = !!(st.check && st.caseDone); save();
+    const next = i < CH.lessons.length-1 ? h('button',{class:'btn primary',type:'button',onclick:()=>go('l'+(i+1))}, `Next: lesson ${i+2}`) : h('button',{class:'btn primary',type:'button',onclick:()=>go('final')}, 'Go to the final case test');
+    caseCard.append(h('div',{class:'row',style:'margin-top:14px'}, next, h('button',{class:'btn',type:'button',onclick:()=>go('progress')},'See my progress')));
+  }
+  renderCheck(); renderCase(); layout();
+}
+
+/* generic question with confidence rating */
+function askQuestion(host, q, practice, onDone, isRetry){
+  const box = h('div'); host.append(box);
+  if (!isRetry || true) box.append(h('p',{class:'q'}, q.q));
+  let conf = null;
+  const confSeg = seg([['sure','I\'m sure'],['unsure','I\'m not sure']], null, v=>conf=v, 'Confidence');
+  if (!practice) box.append(h('div',{class:'conf'}, h('span',null,'Before you answer, how sure are you?'), confSeg, h('span',{style:'font-size:.8rem'},'(optional, helps your self-awareness score)')));
+  const opts = h('div',{class:'opts'}); const fb = h('div',{class:'fb'});
+  q.o.forEach((o,j)=>{ const b = h('button',{class:'opt',type:'button'}, o); b.onclick = () => {
+    const ok = j===q.a; opts.querySelectorAll('.opt').forEach(x=>x.disabled=true); b.classList.add(ok?'right':'wrong'); if (!ok) opts.children[q.a].classList.add('right');
+    fb.innerHTML = `<b>${ok?'Right.':'Not quite.'}</b> ${q.e}`; onDone(ok, conf); };
+    opts.append(b); });
+  box.append(opts, fb);
+}
+
+/* ---------------- FINAL case test ---------------- */
+function renderFinal(main){
+  const M = metrics();
+  main.append(h('div',null, h('div',{class:'eyebrow'},'Final case test'), h('h2',{style:'font-size:1.8rem;margin-top:4px'},'Check your learning path'), h('p',{class:'lede',style:'margin-top:6px'}, `${CH.test.length} short questions across all ${CH.lessons.length} lessons. You see the answer after each one. Your latest attempt counts towards your learning index, and the results show which lessons to revisit.`)));
+  if (M.done < CH.lessons.length) main.append(h('div',{class:'card',style:'background:var(--signal-soft)'}, h('p',null, `You have finished ${M.done} of ${CH.lessons.length} lessons. You can take the test now, but you will probably score higher after finishing them.`)));
+  const host = h('div',{class:'card'}); main.append(host);
+  if (S.test) { host.append(h('p',null, h('span',{class:'pill acc'}, `Last attempt: ${S.test.score} of ${CH.test.length}`), ` · ${S.test.attempts} attempt${S.test.attempts>1?'s':''}`), h('div',{class:'row',style:'margin-top:10px'}, h('button',{class:'btn primary',type:'button',onclick:()=>{ host.innerHTML=''; runTest(host); }},'Take the test again'), h('button',{class:'btn',type:'button',onclick:()=>go('progress')},'See my results'))); return; }
+  host.append(h('button',{class:'btn primary',type:'button',onclick:()=>{ host.innerHTML=''; runTest(host); }},'Start the test'));
+}
+function runTest(host){
+  const answers = []; let k = 0;
+  const prog = h('p',{class:'eyebrow'}); host.append(prog); const qhost = h('div'); host.append(qhost);
+  function next(){
+    qhost.innerHTML=''; prog.textContent = `Question ${k+1} of ${CH.test.length} · from lesson ${CH.test[k].lesson+1}: ${CH.lessons[CH.test[k].lesson].title}`;
+    askQuestion(qhost, CH.test[k], false, (ok, conf) => { answers.push({ok, conf, lesson: CH.test[k].lesson});
+      qhost.append(h('div',{class:'row',style:'margin-top:12px'}, h('button',{class:'btn primary',type:'button',onclick:()=>{ k++; if (k<CH.test.length) next(); else finish(); }}, k<CH.test.length-1?'Next question':'See my results'))); });
+  }
+  function finish(){ const score = answers.filter(a=>a.ok).length; S.test = {answers, score, attempts:(S.test?S.test.attempts:0)+1, at:Date.now()}; save(); go('progress'); }
+  next();
+}
+
+/* ---------------- PROGRESS: learning index, advice, certificate ---------------- */
+function gaugeSVG(v){
+  const r=60, c=2*Math.PI*r, f=c*v/100;
+  return `<svg viewBox="0 0 150 150" role="img" aria-label="Learning index ${v} out of 100"><circle cx="75" cy="75" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="14"/><circle cx="75" cy="75" r="${r}" fill="none" stroke="var(--accent)" stroke-width="14" stroke-linecap="round" stroke-dasharray="${f} ${c}" transform="rotate(-90 75 75)"/><text x="75" y="80" text-anchor="middle" font-size="34" font-weight="700" fill="var(--ink)" font-family="JetBrains Mono, monospace">${v}</text><text x="75" y="102" text-anchor="middle" font-size="11" fill="var(--muted)">out of 100</text></svg>`;
+}
+function advice(){
+  const out = []; const n = CH.lessons.length;
+  const testBy = {}; if (S.test) S.test.answers.forEach(a=>{ (testBy[a.lesson] = testBy[a.lesson]||{ok:0,n:0}); testBy[a.lesson].n++; if (a.ok) testBy[a.lesson].ok++; });
+  const weak = [];
+  for (let i=0;i<n;i++){ const l = S.lessons[i]; const reasons = [];
+    if (l && l.check && !l.check.ok) reasons.push('missed the quick check');
+    if (l && l.caseDone && l.caseScore < l.caseMax*0.5) reasons.push(`scored ${l.caseScore} of ${l.caseMax} on the case`);
+    if (testBy[i] && testBy[i].ok < testBy[i].n) reasons.push(`${testBy[i].n-testBy[i].ok} final-test question${testBy[i].n-testBy[i].ok>1?'s':''} wrong`);
+    if (reasons.length) weak.push([i, reasons]); }
+  weak.sort((a,b)=>b[1].length-a[1].length).slice(0,3).forEach(([i,r])=>out.push(['Revisit', `Lesson ${i+1}, ${CH.lessons[i].title}: you ${r.join(', ')}. Try it in Read mode and open "Explain more simply".`, 'l'+i]));
+  const nf = [...Array(n).keys()].find(i=>!(S.lessons[i]&&S.lessons[i].done));
+  if (nf!==undefined) out.push(['Next', `Carry on with lesson ${nf+1}, ${CH.lessons[nf].title}.`, 'l'+nf]);
+  else if (!S.test) out.push(['Next', 'All lessons done. Take the final case test to check your learning path.', 'final']);
+  const M = metrics();
+  if (M.calN >= 4 && M.C < 0.6) out.push(['Self-awareness', 'Your confidence often did not match your answers. In security work, knowing when you are unsure matters as much as knowing the answer. Keep rating your confidence.', null]);
+  if (S.plan && S.secs > 0){ const done = Object.values(S.lessons).filter(l=>l.done); const avg = done.length ? done.reduce((a,l)=>a+l.secs,0)/done.length/60 : 0;
+    if (avg >= 0.5) out.push(['Your pace', `You spend about ${avg.toFixed(1)} minutes per lesson. ${avg > 6 ? 'Taking your time is fine. Shorter sittings may suit you better: try 5-minute sittings on the Start page.' : avg < 2.5 ? 'You move quickly. If the cases feel easy, the Fast track path lets you skip straight to them.' : 'That fits your plan well.'}`, null]); }
+  if (!out.length) out.push(['Well done', 'No gaps found. You could teach this chapter to a colleague.', null]);
+  return out;
+}
+function renderProgress(main){
+  const M = metrics();
+  main.append(h('div',null, h('div',{class:'eyebrow'},'My progress'), h('h2',{style:'font-size:1.8rem;margin-top:4px'},'Your learning index'), h('p',{class:'lede',style:'margin-top:6px'}, S.test ? 'Based on your lessons, cases and final test.' : 'Provisional until you take the final case test.')));
+  const dims = [['Knowledge', M.K, 'Quick checks right first time, plus final-test answers'], ['Applying it', M.A, 'Points from the case simulations'], ['Self-awareness', M.C, 'How often your confidence matched your answer'], ['Completion', M.P, 'Lessons finished and final test taken']];
+  const dimsEl = h('div',{class:'dims'}, dims.map(([n,v,d])=>h('div',null, h('div',{class:'dim'}, h('span',null,n), h('div',{class:'track'}, h('div',{class:'fill',style:`width:${v==null?0:pct(v)}%`})), h('output',null, v==null?'—':pct(v)+'%')), h('div',{style:'font-size:.78rem;color:var(--muted);margin:-4px 0 0'}, d))));
+  const ladder = h('div',{class:'ladder'}, LEVELS.map(l=>h('div',{class: l[1]===M.level?'on':''}, l[1], h('br'), `${l[0]}+`)));
+  main.append(h('div',{class:'card'}, h('div',{class:'gauge'}, h('div',{html:gaugeSVG(M.index)}), h('div',{style:'flex:1;min-width:240px'}, h('h3',null, M.level), h('p',{class:'lede'}, M.levelText), ladder)), h('div',{style:'margin-top:16px'}, dimsEl),
+    h('p',{class:'foot',style:'margin-top:12px'},'How it is worked out: knowledge 35%, applying it 35%, self-awareness 15%, completion 15%. Levels follow the "novice to expert" stages widely used in professional education.')));
+  const adv = h('div',{class:'advice'}, advice().map(([t,txt,v])=>h('div',null, h('span',{class:'pill acc',style:'flex:none'},t), h('span',{style:'flex:1'},txt), v ? h('button',{class:'btn small',type:'button',onclick:()=>go(v)},'Go') : null)));
+  main.append(h('div',{class:'card'}, h('h3',null,'What to do next'), adv));
+  const rows = CH.lessons.map((les,i)=>{ const l = S.lessons[i]||{}; return h('tr',null, h('td',null, `${i+1}. ${les.title}`), h('td',null, l.watched?'✓':'—'), h('td',null, l.check ? (l.check.ok ? h('span',{class:'pill good'},'Right') : h('span',{class:'pill warn'},'Missed')) : '—'), h('td',null, l.caseDone ? `${l.caseScore}/${l.caseMax}` : '—'), h('td',{class:'mono'}, l.secs ? (l.secs<60 ? '<1 min' : Math.round(l.secs/60)+' min') : '—')); });
+  main.append(h('div',{class:'card'}, h('h3',null,'Lesson by lesson'), h('div',{class:'tablewrap'}, h('table',{class:'t'}, h('thead',null,h('tr',null, ['Lesson','Watched','Check','Case','Time'].map(t=>h('th',null,t)))), h('tbody',null,rows))),
+    S.test ? h('p',{style:'margin-top:10px'}, h('span',{class:'pill acc'}, `Final test: ${S.test.score} of ${CH.test.length}`)) : null));
+  // certificate
+  const nameIn = h('input',{type:'text',id:'certName',placeholder:'Your name as it should appear',value:S.name||''});
+  const certBtn = h('button',{class:'btn primary',type:'button'},'Download certificate');
+  const note = h('p',{class:'foot'});
+  const eligible = S.test && M.index >= 60;
+  certBtn.disabled = !eligible; note.textContent = eligible ? 'Saves a picture of your certificate. Your score is calculated in your own browser, so keep the file as your record.' : 'Available once you have taken the final case test and reached Competent (60 or more).';
+  certBtn.onclick = () => { S.name = nameIn.value.trim(); save(); makeCert(S.name || 'Learner', M); };
+  main.append(h('div',{class:'card'}, h('h3',null,'Certificate'), h('div',{class:'row'}, nameIn, certBtn), note,
+    h('div',{class:'row',style:'margin-top:14px'}, h('button',{class:'btn small',type:'button',onclick:()=>{ resetBox.hidden = false; }},'Start this chapter again'))));
+  const resetBox = h('div',{class:'card',hidden:true,style:'background:var(--bad-soft)'}, h('p',null,'This clears your plan, answers and scores for this chapter in this browser. It cannot be undone.'), h('div',{class:'row',style:'margin-top:10px'}, h('button',{class:'btn',type:'button',onclick:()=>{ S = blank(); save(); go('start'); }},'Yes, clear this chapter'), h('button',{class:'btn',type:'button',onclick:()=>{ resetBox.hidden=true; }},'Keep my progress')));
+  main.append(resetBox);
+}
+function makeCert(name, M){
+  const c = document.createElement('canvas'); c.width = 1600; c.height = 1130; const x = c.getContext('2d');
+  x.fillStyle = '#FFFFFF'; x.fillRect(0,0,1600,1130); x.strokeStyle = '#1D4E89'; x.lineWidth = 14; x.strokeRect(40,40,1520,1050); x.lineWidth = 2; x.strokeRect(70,70,1460,990);
+  x.fillStyle = '#1D4E89'; x.textAlign = 'center'; x.font = '600 30px Georgia, serif'; x.fillText('GUIDE TO AI FOR CYBERSECURITY', 800, 180);
+  x.fillStyle = '#14232A'; x.font = '600 72px Georgia, serif'; x.fillText('Certificate of learning', 800, 290);
+  x.font = '28px Arial, sans-serif'; x.fillStyle = '#55686D'; x.fillText('This is to record that', 800, 380);
+  x.fillStyle = '#14232A'; x.font = '600 64px Georgia, serif'; x.fillText(name.slice(0,48), 800, 470);
+  x.font = '28px Arial, sans-serif'; x.fillStyle = '#55686D'; x.fillText('has completed', 800, 550);
+  x.fillStyle = '#14232A'; x.font = '600 40px Georgia, serif'; x.fillText((CH.num==='A'?'Appendix A: ':'Chapter '+CH.num+': ') + CH.title, 800, 620, 1400);
+  x.fillStyle = '#1D4E89'; x.font = '600 46px Arial, sans-serif'; x.fillText(`Learning index ${M.index} / 100  ·  ${M.level}`, 800, 740);
+  x.fillStyle = '#55686D'; x.font = '24px Arial, sans-serif';
+  x.fillText(`Knowledge ${pct(M.K)}%   ·   Applying it ${pct(M.A)}%   ·   Self-awareness ${M.C==null?'—':pct(M.C)+'%'}   ·   Final test ${S.test.score}/${CH.test.length}`, 800, 800);
+  x.fillText('Issued ' + new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}) + '  ·  Self-assessed online course record, calculated in the learner\'s browser', 800, 980);
+  c.toBlob(b => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `certificate-${CH.id}.png`; document.body.append(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 1000); });
+}
+
+/* ---------------- boot ---------------- */
+$('#chNum').textContent = CH.num==='A' ? 'Appendix A' : 'Chapter '+CH.num;
+$('#chTitle span').textContent = CH.title;
+const hv = (location.hash||'').slice(1);
+go(views().includes(hv) ? hv : (S.plan ? 'l'+firstUnfinished() : 'start'));
+</script>
+</body>
+</html>
